@@ -11,9 +11,9 @@ dotenv.config({ quiet: true });
 
 const app = express();
 app.use(cors({
-    origin: process.env.FRONTEND_URL,
+    origin: [process.env.FRONTEND_URL].filter(Boolean),
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: ['Content-Type', 'Authorization', 'Access--Control-Allow-Origin'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept', 'X-Requested-With'],
     credentials: true // Allow credentials
 }));
 
