@@ -1,17 +1,16 @@
 "use client";
 import React, { useState, useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 const SearchFilterBar = ({ onSearch, initialFilters = {} }) => {
     const router = useRouter();
-    const searchParams = useSearchParams();
 
     const [filters, setFilters] = useState({
-        location: initialFilters.location || searchParams.get('location') || '',
-        category: initialFilters.category || searchParams.get('category') || '',
-        minPrice: initialFilters.minPrice || searchParams.get('minPrice') || '',
-        maxPrice: initialFilters.maxPrice || searchParams.get('maxPrice') || '',
-        type: initialFilters.type || searchParams.get('type') || 'buy'
+        location: initialFilters.location || '',
+        category: initialFilters.category || '',
+        minPrice: initialFilters.minPrice || '',
+        maxPrice: initialFilters.maxPrice || '',
+        type: initialFilters.type || 'buy'
     });
 
     const [isLoading, setIsLoading] = useState(false);
@@ -68,19 +67,6 @@ const SearchFilterBar = ({ onSearch, initialFilters = {} }) => {
             router.push('/properties');
         }
     };
-
-    // Update filters when URL params change
-    // useEffect(() => {
-    //     if (!initialFilters || Object.keys(initialFilters).length === 0) {
-    //         setFilters({
-    //             location: searchParams.get('location') || '',
-    //             category: searchParams.get('category') || '',
-    //             minPrice: searchParams.get('minPrice') || '',
-    //             maxPrice: searchParams.get('maxPrice') || '',
-    //             type: searchParams.get('type') || 'buy'
-    //         });
-    //     }
-    // }, [searchParams, initialFilters]);
 
     return (
         <div className="bg-white p-4 rounded-lg shadow-sm border">

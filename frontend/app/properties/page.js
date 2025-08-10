@@ -1,12 +1,31 @@
 "use client";
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import SearchFilterBar from '../components/SearchFilterBar'
 import { useAppContext } from '../context/AppContext'
 import { getProperties, searchProperties } from '../../handlers/PropertyHandlers'
 
-const Properties = () => {
+// Loading component for Suspense fallback
+const PropertiesLoading = () => (
+    <div className="min-h-screen bg-gray-50">
+        <div className="bg-white shadow-sm">
+            <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6">Properties</h1>
+                <div className="h-16 bg-gray-200 rounded animate-pulse"></div>
+            </div>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
+            <div className="text-center py-12">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+                <p className="mt-2 text-gray-600">Loading properties...</p>
+            </div>
+        </div>
+    </div>
+);
+
+// Main Properties component that uses useSearchParams
+const PropertiesContent = () => {
     const [properties, setProperties] = useState([]);
     const [error, setError] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
@@ -252,6 +271,15 @@ const Properties = () => {
                 )}
             </div>
         </div>
+    );
+};
+
+// Main Properties page component with Suspense wrapper
+const Properties = () => {
+    return (
+        <Suspense fallback={<PropertiesLoading />}>
+            <PropertiesContent />
+        </Suspense>
     );
 };
 
