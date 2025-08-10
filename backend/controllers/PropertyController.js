@@ -4,11 +4,23 @@ export const getAllProperties = async (req, res) => {
     const query = req.query; // Extract query parameters for filtering, sorting, etc.
 
     try {
-        const properties = await Property.findAll(query);
-        res.status(200).json(properties);
+        const properties = await Property.findAll({
+            where: query,
+            order: [['createdAt', 'DESC']]
+        });
+
+        res.status(200).json({
+            success: true,
+            message: 'Properties fetched successfully',
+            properties: properties,
+            totalCount: properties.length
+        });
     } catch (error) {
         console.error('Error fetching properties:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error'
+        });
     }
 }
 
@@ -17,32 +29,52 @@ export const getPropertyById = async (req, res) => {
     try {
         const property = await Property.findByPk(id);
         if (!property) {
-            return res.status(404).json({ message: 'Property not found' });
+            return res.status(404).json({
+                success: false,
+                message: 'Property not found'
+            });
         }
-        res.status(200).json(property);
+        res.status(200).json({
+            success: true,
+            message: 'Property fetched successfully',
+            property: property
+        });
     } catch (error) {
         console.error('Error fetching property:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error'
+        });
     }
 }
 
 export const createProperty = async (req, res) => {
     const { title, description, type, purpose, location, price } = req.body;
     if (!title || !type || !purpose || !location || !price) {
-        return res.status(400).json({ message: 'Missing required fields' });
+        return res.status(400).json({
+            success: false,
+            message: 'Missing required fields'
+        });
     }
 
-    const properyData = {
+    const propertyData = {
         title, description, type, purpose, location, price,
         dealer_id: req.user.id // Assuming authenticated user is the dealer
     };
 
     try {
-        const newProperty = await Property.create(properyData);
-        res.status(201).json(newProperty);
+        const newProperty = await Property.create(propertyData);
+        res.status(201).json({
+            success: true,
+            message: 'Property created successfully',
+            property: newProperty
+        });
     } catch (error) {
         console.error('Error creating property:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error'
+        });
     }
 }
 
@@ -52,7 +84,10 @@ export const updateProperty = async (req, res) => {
     try {
         const property = await Property.findByPk(id);
         if (!property) {
-            return res.status(404).json({ message: 'Property not found' });
+            return res.status(404).json({
+                success: false,
+                message: 'Property not found'
+            });
         }
 
         property.purpose = purpose || property.purpose;
@@ -60,10 +95,17 @@ export const updateProperty = async (req, res) => {
         property.isActive = isActive !== undefined ? isActive : property.isActive;
 
         await property.save();
-        res.status(200).json(property);
+        res.status(200).json({
+            success: true,
+            message: 'Property updated successfully',
+            property: property
+        });
     } catch (error) {
         console.error('Error updating property:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error'
+        });
     }
 }
 
@@ -72,12 +114,21 @@ export const deleteProperty = async (req, res) => {
     try {
         const property = await Property.findByPk(id);
         if (!property) {
-            return res.status(404).json({ message: 'Property not found' });
+            return res.status(404).json({
+                success: false,
+                message: 'Property not found'
+            });
         }
         await property.destroy();
-        res.status(204).send();
+        res.status(200).json({
+            success: true,
+            message: 'Property deleted successfully'
+        });
     } catch (error) {
         console.error('Error deleting property:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error'
+        });
     }
 }

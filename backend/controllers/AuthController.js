@@ -3,58 +3,120 @@ import bcrypt from 'bcrypt';
 import { generateToken } from '../utils/jwtHandlers.js';
 
 export const registerUser = async (req, res) => {
-    const { name, email, password, role } = req.body;
-    if (!name || !email || !password || !role) {
-        return res.status(400).json({ message: 'Please fill all the fields' });
+    const { firstName, lastName, email, phone, password, userType } = req.body;
+    if (!firstName || !lastName || !email || !phone || !password || !userType) {
+        return res.status(400).json({
+            success: false,
+            message: 'Please fill all the fields'
+        });
     }
 
     try {
         // Check if user already exists
-        const existingUser = await User.find({ email, role });
-        if (existingUser.length > 0) {
-            return res.status(400).json({ message: 'User already exists' });
+        const existingUser = await User.findOne({ where: { email } });
+        if (existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: 'User already exists with this email'
+            });
         }
 
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create a new user
-        await User.create({ name, email, password: hashedPassword });
-        return res.status(201).json({ message: 'User registered successfully' });
+        const newUser = await User.create({
+            name: `${firstName} ${lastName}`,
+            email, phone,
+            password: hashedPassword,
+            role: userType
+        });
+
+        // Remove password from response
+        const userResponse = {
+            id: newUser.id,
+            name: newUser.name,
+            email: newUser.email,
+            phone: newUser.phone,
+            role: newUser.role,
+            firstName,
+            lastName
+        };
+
+        return res.status(201).json({
+            success: true,
+            message: 'User registered successfully',
+            user: userResponse
+        });
     } catch (error) {
         console.error('Error registering user:', error);
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
     }
 }
 
 export const loginUser = async (req, res) => {
-    const { email, password, role } = req.body;
-    if (!email || !password || !role) {
-        return res.status(400).json({ message: 'Please fill all the fields' });
+    const { email, password } = req.body;
+    if (!email || !password) {
+        return res.status(400).json({
+            success: false,
+            message: 'Please provide email and password'
+        });
     }
 
     try {
         // Find user by email
-        const user = await User.findOne({ email, role });
+        const user = await User.findOne({ where: { email } });
         if (!user) {
-            return res.status(400).json({ message: 'User not found' });
+            return res.status(400).json({
+                success: false,
+                message: 'User not found'
+            });
         }
 
         // Check password
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            return res.status(400).json({ message: 'Invalid credentials' });
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid credentials'
+            });
         }
 
         // Generate JWT token
         const token = generateToken({ id: user.id, email: user.email, role: user.role });
 
-        // Return success response
-        res.cookie('access-token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
-        return res.status(200).json({ message: 'Login successful', user });
+        // Remove password from response
+        const userResponse = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            firstName: user.name.split(' ')[0],
+            lastName: user.name.split(' ')[1] || ''
+        };
+
+        // Set cookie and return response
+        res.cookie('access-token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: 'Login successful',
+            user: userResponse
+        });
     } catch (error) {
-        console.error('Error logging in user:', error);
-        return res.status(500).json({ message: error.message });
+        console.error('Error logging in user:', error.message);
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
     }
 }
 
@@ -62,9 +124,49 @@ export const logoutUser = (req, res) => {
     try {
         // Clear the cookie
         res.clearCookie('access-token');
-        return res.status(200).json({ message: 'Logout successful' });
+        return res.status(200).json({
+            success: true,
+            message: 'Logout successful'
+        });
     } catch (error) {
-        console.error('Error logging out user:', error);
-        return res.status(500).json({ message: error.message });
+        console.error('Error logging out user:', error.message);
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+}
+
+export const getCurrentUser = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.user.id);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        // Remove password from response
+        const userResponse = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            firstName: user.name.split(' ')[0],
+            lastName: user.name.split(' ')[1] || ''
+        };
+
+        return res.status(200).json({
+            success: true,
+            message: 'Profile fetched successfully',
+            user: userResponse
+        });
+    } catch (error) {
+        console.error('Error fetching current user:', error.message);
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
     }
 }

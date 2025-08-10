@@ -9,7 +9,7 @@ const AuthMiddleware = async (req, res, next) => {
 
     try {
         const decoded = verifyToken(token);
-        const user = await User.findById(decoded.id);
+        const user = await User.findByPk(decoded.id);
         if (!user || user.role !== decoded.role) {
             return res.status(404).json({ message: 'User not found' });
         }

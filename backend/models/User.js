@@ -17,6 +17,10 @@ const UserModel = (sequelize) => {
             allowNull: false,
             unique: true, // Ensure emails are unique
         },
+        phone: {
+            type: DataTypes.STRING,
+            allowNull: true, // Phone is optional
+        },
         password: {
             type: DataTypes.STRING,
             allowNull: false,

@@ -4,6 +4,7 @@ import AuthRouter from './routes/AuthRoutes.js';
 import PropertyRouter from './routes/PropertyRoutes.js';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 
 dotenv.config({ quiet: true });
@@ -14,6 +15,7 @@ app.use(cors({
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true // Allow credentials
 }));
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
