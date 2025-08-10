@@ -1,0 +1,238 @@
+<!-- This is simple initial HTML webpage for reference, not related with next.js code -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Himalayan Nest Realty</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    header {
+      background-color: #2c3e50;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    nav {
+      background-color: #34495e;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: white;
+      padding: 1rem;
+      text-decoration: none;
+    }
+
+    nav a:hover {
+      background-color: #2c3e50;
+    }
+
+    .hero {
+      background: url('https://source.unsplash.com/1600x600/?real-estate,uttarakhand') no-repeat center center/cover;
+      height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2rem;
+      text-shadow: 2px 2px 4px #000;
+    }
+
+    .container {
+      padding: 2rem;
+    }
+
+    .services,
+    .properties,
+    .agents,
+    .testimonials {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .service,
+    .property,
+    .agent,
+    .testimonial {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .property img,
+    .agent img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    form {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      margin: auto;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      background-color: #2c3e50;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #1a242f;
+    }
+
+    footer {
+      background-color: #2c3e50;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Himalayan Nest Realty</h1>
+    <p>Your Trusted Property Partner in Roorkee, Haridwar & Uttarakhand</p>
+  </header>
+  <nav>
+    <a href="#services">Services</a>
+    <a href="#properties">Properties</a>
+    <a href="#agents">Our Agents</a>
+    <a href="#testimonials">Testimonials</a>
+    <a href="#contact">Contact</a>
+    <a href="#about">About</a>
+  </nav>
+  <div class="hero">
+    <div>Find Your Dream Home in the Foothills of Himalayas</div>
+  </div>
+  <div class="container">
+    <h2 id="services">Our Services</h2>
+    <div class="services">
+      <div class="service">
+        <h3>Property Buying</h3>
+        <p>Helping you find residential and commercial properties in Roorkee, Haridwar, and all of Uttarakhand.</p>
+      </div>
+      <div class="service">
+        <h3>Property Selling</h3>
+        <p>Get the best deals when selling your property with expert local market knowledge.</p>
+      </div>
+      <div class="service">
+        <h3>Rental Services</h3>
+        <p>Find tenants or rental properties easily with our dedicated support in Haridwar and Roorkee.</p>
+      </div>
+      <div class="service">
+        <h3>Legal Assistance</h3>
+        <p>We offer legal consulting for property transfers, registration, and documentation.</p>
+      </div>
+    </div>
+
+    <h2 id="properties">Featured Properties</h2>
+    <div class="properties">
+      <div class="property">
+        <img src="https://source.unsplash.com/400x300/?house,mountain" alt="Villa in Haridwar">
+        <h3>3BHK Villa - Haridwar</h3>
+        <p>Location: Shivalik Nagar, Haridwar</p>
+        <p>Price: ₹65 Lakhs</p>
+        <p>Modern villa with garden and parking, close to schools and highway.</p>
+      </div>
+      <div class="property">
+        <img src="https://source.unsplash.com/400x300/?apartment,realestate" alt="Flat in Roorkee">
+        <h3>2BHK Flat - Roorkee</h3>
+        <p>Location: Civil Lines, Roorkee</p>
+        <p>Price: ₹40 Lakhs</p>
+        <p>Furnished flat in gated society with 24/7 security and power backup.</p>
+      </div>
+      <div class="property">
+        <img src="https://source.unsplash.com/400x300/?land,plot" alt="Residential Plot">
+        <h3>Residential Plot - Dehradun Road</h3>
+        <p>Location: Roorkee outskirts</p>
+        <p>Price: ₹18 Lakhs (120 sq. yd.)</p>
+        <p>Perfect for building your dream home, clear title and road facing.</p>
+      </div>
+    </div>
+
+    <h2 id="agents">Meet Our Agents</h2>
+    <div class="agents">
+      <div class="agent">
+        <img src="https://source.unsplash.com/400x300/?person,man" alt="Agent Rajiv">
+        <h3>Rajiv Mehta</h3>
+        <p>Senior Consultant - Roorkee</p>
+        <p>Email: rajiv@hnr.com</p>
+      </div>
+      <div class="agent">
+        <img src="https://source.unsplash.com/400x300/?person,woman" alt="Agent Pooja">
+        <h3>Pooja Sharma</h3>
+        <p>Legal Advisor - Haridwar</p>
+        <p>Email: pooja@hnr.com</p>
+      </div>
+    </div>
+
+    <h2 id="testimonials">What Our Clients Say</h2>
+    <div class="testimonials">
+      <div class="testimonial">
+        <p>“Very smooth experience buying my first home in Roorkee. Highly recommend Himalayan Nest Realty!”</p>
+        <strong>- Aman Verma</strong>
+      </div>
+      <div class="testimonial">
+        <p>“Pooja helped us with all the legal processes. Transparent and professional service.”</p>
+        <strong>- Neha Rawat</strong>
+      </div>
+    </div>
+
+    <h2 id="contact">Contact Us</h2>
+    <form>
+      <label for="name">Your Name:</label>
+      <input type="text" id="name" name="name" required />
+
+      <label for="email">Your Email:</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="message">Message:</label>
+      <textarea id="message" name="message" rows="5" required></textarea>
+
+      <button type="submit">Send Inquiry</button>
+    </form>
+
+    <h2 id="about">About Us</h2>
+    <p>We are a locally rooted real estate company with deep knowledge of the Uttarakhand property market, especially
+      Roorkee and Haridwar. Whether you're buying, selling, or renting, we ensure smooth, transparent, and profitable
+      transactions. Trust Himalayan Nest Realty to turn your property dreams into reality.</p>
+  </div>
+  <footer>
+    <p>&copy; 2025 Himalayan Nest Realty. All rights reserved.</p>
+  </footer>
+</body>
+
+</html>

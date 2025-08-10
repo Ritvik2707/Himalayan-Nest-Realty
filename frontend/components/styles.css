@@ -1,0 +1,12 @@
+/* @import "tailwindcss";
+
+@media screen and (max-width: 640px) {
+    .mobile-menu {
+        position: absolute;
+        flex-direction: column;
+        top: 40px;
+        right: 0;
+        width: 40%;
+        height: 100vh;
+    }
+} */
