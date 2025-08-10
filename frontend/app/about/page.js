@@ -22,7 +22,7 @@ const About = () => {
                         <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-4 sm:mb-6">Our Mission</h2>
                         <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">
                             At Himalayan Nest, we are committed to making property searching and transactions seamless,
-                            transparent, and reliable. Whether you're looking to buy, rent, or list your property,
+                            transparent, and reliable. Whether you&apos;re looking to buy, rent, or list your property,
                             we provide a platform that connects buyers, sellers, and renters effectively.
                         </p>
                         <p className="text-sm sm:text-base text-gray-600">

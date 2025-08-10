@@ -587,7 +587,7 @@ const CallToAction = () => {
         <h2 className="text-4xl md:text-5xl font-bold mb-6">Ready to Find Your Dream Property?</h2>
         <p className="text-xl text-green-100 mb-12 leading-relaxed">
           Join thousands of satisfied customers who found their perfect home with Himalayan Nest.
-          Whether you're buying, selling, or renting, we're here to help you every step of the way.
+          Whether you&apos;re buying, selling, or renting, we&apos;re here to help you every step of the way.
         </p>
 
         <div className="flex flex-col md:flex-row gap-6 justify-center items-center">

@@ -1,7 +1,9 @@
+import Image from "next/image";
+
 export default function PropertyCard({ id, title, price, location, image }) {
     return (
         <div className="border rounded-lg overflow-hidden shadow-lg">
-            <img src={image} alt={title} className="w-full h-48 object-cover" />
+            <Image src={image} alt={title} className="w-full h-48 object-cover" />
             <div className="p-4">
                 <h2 className="font-bold text-xl">{title}</h2>
                 <p className="text-gray-600">{location}</p>
