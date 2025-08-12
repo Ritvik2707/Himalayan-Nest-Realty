@@ -3,7 +3,7 @@ const nextConfig = {
     "images": {
         remotePatterns: [
             {
-                protocol: process.env.NODE_ENV == 'production' ? 'https' : 'http',
+                protocol: process.env.NEXT_ENV == 'production' ? 'https' : 'http',
                 hostname: process.env.NEXT_PUBLIC_IMAGE_DOMAIN || 'localhost',
                 pathname: '/api/uploads/**',
             },
