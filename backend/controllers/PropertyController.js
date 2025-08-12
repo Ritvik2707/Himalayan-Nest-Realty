@@ -38,7 +38,7 @@ export const getAllProperties = async (req, res) => {
 
     // Create filter query based on request parameters
     const filters = createFilterQuery(query);
-    console.log('filter parameters:', query, filters);
+    // console.log('filter parameters:', query, filters);
 
     try {
         let properties = await Property.findAll({
