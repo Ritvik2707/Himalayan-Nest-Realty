@@ -3,18 +3,24 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAppContext } from '../context/AppContext';
 
-const SearchFilterBar = ({ onSearch, initialFilters = {}, searchParams }) => {
+const SearchFilterBar = ({ onSearch, searchParams }) => {
     const router = useRouter();
 
-    const [filters, setFilters] = useState({
-        location: initialFilters.location || '',
-        category: initialFilters.category || '',
-        minPrice: initialFilters.minPrice || '',
-        maxPrice: initialFilters.maxPrice || '',
-        purpose: initialFilters.purpose || 'buy'
-    });
-
+    const [filters, setFilters] = useState({});
     const { loading, setLoading } = useAppContext();
+
+    useEffect(() => {
+        // Initialize filters from searchParams or default values
+        const initialFilters = {
+            location: searchParams.get('location') || '',
+            category: searchParams.get('category') || '',
+            minPrice: searchParams.get('budget') || '',
+            maxPrice: searchParams.get('budget') || '',
+            keywords: searchParams.get('keywords') || '',
+            purpose: searchParams.get('purpose') || 'buy' // Default to 'buy'
+        };
+        setFilters(initialFilters);
+    }, [searchParams]);
 
     const handleFilterChange = (key, value) => {
         setFilters(prev => ({
@@ -58,6 +64,7 @@ const SearchFilterBar = ({ onSearch, initialFilters = {}, searchParams }) => {
             category: '',
             minPrice: '',
             maxPrice: '',
+            keywords: '',
             purpose: 'buy'
         };
         console.log('Clearing filters:', searchParams);
@@ -121,6 +128,14 @@ const SearchFilterBar = ({ onSearch, initialFilters = {}, searchParams }) => {
                     className="border rounded px-3 py-2 focus:outline-none focus:border-green-500"
                     value={filters.maxPrice}
                     onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
+                />
+
+                <input
+                    type="text"
+                    placeholder="Enter keywords..."
+                    className="border rounded px-3 py-2 focus:outline-none focus:border-green-500 w-full col-span-1 md:col-span-2 lg:col-span-2"
+                    value={filters.keywords || ''}
+                    onChange={(e) => handleFilterChange('keywords', e.target.value)}
                 />
 
                 <button

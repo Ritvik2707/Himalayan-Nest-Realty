@@ -133,8 +133,8 @@ const HeroSection = () => {
                 Budget {activeTab === 'rent' ? '(per month)' : ''}
               </label>
               <input
-                type="text"
-                placeholder={activeTab === 'rent' ? "₹5,000 - ₹25,000" : "₹10L - ₹1Cr"}
+                type="number"
+                placeholder={activeTab === 'rent' ? "Your Monthly Budget (in ₹)" : "Your Budget (in ₹)"}
                 value={searchData.budget}
                 onChange={(e) => handleInputChange('budget', e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-gray-900"
