@@ -1,5 +1,7 @@
 import { Op } from 'sequelize';
 import { Property } from '../config/db.js';
+import path from 'path';
+import { deleteUploadedFiles } from '../middlewares/FileUploadMiddleware.js';
 
 const createFilterQuery = (query) => {
     const filters = {};
@@ -84,28 +86,60 @@ export const getPropertyById = async (req, res) => {
 }
 
 export const createProperty = async (req, res) => {
-    const { title, description, type, purpose, location, price } = req.body;
-    if (!title || !type || !purpose || !location || !price) {
-        return res.status(400).json({
-            success: false,
-            message: 'Missing required fields'
-        });
-    }
-
-    const propertyData = {
-        title, description, type, purpose, location, price,
-        dealer_id: req.user.id // Assuming authenticated user is the dealer
-    };
-
     try {
+        const { title, description, category, purpose, location, price } = req.body;
+
+        // Validate required fields
+        if (!title || !category || !purpose || !location || !price) {
+            // Clean up uploaded files if validation fails
+            if (req.files && req.files.length > 0) {
+                const filePaths = req.files.map(file => file.path);
+                deleteUploadedFiles(filePaths);
+            }
+            return res.status(400).json({
+                success: false,
+                message: 'Missing required fields: title, category, purpose, location, and price are required'
+            });
+        }
+
+        // Process uploaded images
+        let imageUrls = [];
+        if (req.files && req.files.length > 0) {
+            imageUrls = req.files.map(file => {
+                // Return relative path for storing in database
+                return `/uploads/properties/${file.filename}`;
+            });
+        }
+
+        const propertyData = {
+            title,
+            description: description || '',
+            category,
+            purpose,
+            location,
+            price: parseFloat(price),
+            images: imageUrls,
+            dealer_id: req.user.id // Assuming authenticated user is the dealer
+        };
+
         const newProperty = await Property.create(propertyData);
+
         res.status(201).json({
             success: true,
             message: 'Property created successfully',
-            property: newProperty
+            data: {
+                property: newProperty
+            }
         });
     } catch (error) {
         console.error('Error creating property:', error.message);
+
+        // Clean up uploaded files if database operation fails
+        if (req.files && req.files.length > 0) {
+            const filePaths = req.files.map(file => file.path);
+            deleteUploadedFiles(filePaths);
+        }
+
         res.status(500).json({
             success: false,
             message: error.message || 'Internal server error'

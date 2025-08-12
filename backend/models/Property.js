@@ -34,6 +34,11 @@ const PropertyModel = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        images: {
+            type: DataTypes.JSON, // Store array of image URLs/paths
+            allowNull: true,
+            defaultValue: [],
+        },
         dealer_id: {
             type: DataTypes.UUID,
             allowNull: false,
