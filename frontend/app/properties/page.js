@@ -176,58 +176,49 @@ const PropertiesContent = () => {
                     </div>
                 )}
 
-                {loading ? (
-                    <div className="text-center py-12">
-                        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
-                        <p className="mt-2 text-gray-600">Loading properties...</p>
-                    </div>
-                ) : (
-                    <>
-                        <div className="mb-4 sm:mb-6">
-                            <p className="text-sm sm:text-base text-gray-600">{properties.length} properties found</p>
-                        </div>
+                <div className="mb-4 sm:mb-6">
+                    <p className="text-sm sm:text-base text-gray-600">{properties.length} properties found</p>
+                </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                            {properties.map((property) => (
-                                <div key={property.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-                                    <div className="relative h-40 sm:h-48">
-                                        <Image
-                                            src={property.image}
-                                            alt={property.title}
-                                            onError={(e) => e.target.src = 'default-property.jpg'}
-                                            fill sizes='(100vw) 100vw, (min-width: 640px) 50vw, (min-width: 1024px) 33vw'
-                                            className="object-cover"
-                                            unoptimized
-                                        />
-                                    </div>
-                                    <div className="p-3 sm:p-4">
-                                        <div className="flex justify-between items-start mb-2">
-                                            <h3 className="text-base sm:text-lg font-semibold text-gray-900">{property.title}</h3>
-                                            <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
-                                                {property.category}
-                                            </span>
-                                        </div>
-                                        <p className="text-gray-600 text-xs sm:text-sm mb-2">{property.description}</p>
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-gray-500 text-xs sm:text-sm">{property.location}</span>
-                                            <span className="text-base sm:text-lg font-bold text-green-600">₹{property.price}</span>
-                                        </div>
-                                        <button className="w-full mt-2 sm:mt-3 bg-green-600 text-white py-2 rounded hover:bg-green-700 transition-colors text-sm sm:text-base">
-                                            View Details
-                                        </button>
-                                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                    {properties.map((property) => (
+                        <div key={property.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                            <div className="relative h-40 sm:h-48">
+                                <Image
+                                    src={property.image}
+                                    alt={property.title}
+                                    onError={(e) => e.target.src = 'logos/default-property.jpg'}
+                                    fill sizes='(100vw) 100vw, (min-width: 640px) 50vw, (min-width: 1024px) 33vw'
+                                    className="object-cover"
+                                    unoptimized
+                                />
+                            </div>
+                            <div className="p-3 sm:p-4">
+                                <div className="flex justify-between items-start mb-2">
+                                    <h3 className="text-base sm:text-lg font-semibold text-gray-900">{property.title}</h3>
+                                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                                        {property.category}
+                                    </span>
                                 </div>
-                            ))}
+                                <p className="text-gray-600 text-xs sm:text-sm mb-2">{property.description}</p>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-gray-500 text-xs sm:text-sm">{property.location}</span>
+                                    <span className="text-base sm:text-lg font-bold text-green-600">₹{property.price}</span>
+                                </div>
+                                <button className="w-full mt-2 sm:mt-3 bg-green-600 text-white py-2 rounded hover:bg-green-700 transition-colors text-sm sm:text-base">
+                                    View Details
+                                </button>
+                            </div>
                         </div>
+                    ))}
+                </div>
 
-                        {/* Load More Button */}
-                        <div className="text-center mt-6 sm:mt-8">
-                            <button className="bg-gray-200 text-gray-700 px-4 sm:px-6 py-2 sm:py-3 rounded hover:bg-gray-300 transition-colors text-sm sm:text-base">
-                                Load More Properties
-                            </button>
-                        </div>
-                    </>
-                )}
+                {/* Load More Button */}
+                <div className="text-center mt-6 sm:mt-8">
+                    <button className="bg-gray-200 text-gray-700 px-4 sm:px-6 py-2 sm:py-3 rounded hover:bg-gray-300 transition-colors text-sm sm:text-base">
+                        Load More Properties
+                    </button>
+                </div>
             </div>
         </div>
     );
