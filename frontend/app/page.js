@@ -34,7 +34,7 @@ const HeroSection = () => {
     try {
       const searchParams = {
         ...searchData,
-        type: activeTab
+        purpose: activeTab
       };
 
       // Create URL parameters for navigation
@@ -201,7 +201,7 @@ const FeaturedProperties = () => {
       location: "Civil Lines, Roorkee",
       price: "₹12,000/month",
       originalPrice: "₹15,000/month",
-      type: "Rent",
+      purpose: "Rent",
       image: "/images/flat.jpg",
       features: ["2 BHK", "Furnished", "Parking", "24/7 Security"],
       rating: 4.5,
@@ -213,7 +213,7 @@ const FeaturedProperties = () => {
       location: "Shivalik Nagar, Dehradun",
       price: "₹25 Lakh",
       originalPrice: "₹28 Lakh",
-      type: "Sale",
+      purpose: "Sale",
       image: "/images/plot.jpg",
       features: ["120 Sq Yd", "Corner Plot", "Clear Title", "Road Facing"],
       rating: 4.7,
@@ -225,7 +225,7 @@ const FeaturedProperties = () => {
       location: "Near Har Ki Pauri, Haridwar",
       price: "₹5,000/month",
       originalPrice: "₹6,000/month",
-      type: "Rent",
+      purpose: "Rent",
       image: "/images/PG.jpg",
       features: ["Single Room", "Meals Included", "WiFi", "Laundry"],
       rating: 4.3,
@@ -237,7 +237,7 @@ const FeaturedProperties = () => {
       location: "Rishikesh",
       price: "₹45 Lakh",
       originalPrice: "₹50 Lakh",
-      type: "Sale",
+      purpose: "Sale",
       image: "/images/house.jpg",
       features: ["Garden", "Parking", "Modular Kitchen", "Near Ganga"],
       rating: 4.8,
@@ -249,7 +249,7 @@ const FeaturedProperties = () => {
       location: "Roorkee",
       price: "₹15,000/month",
       originalPrice: "₹18,000/month",
-      type: "Rent",
+      purpose: "Rent",
       image: "/images/flat.jpg",
       features: ["Swimming Pool", "Gym", "Clubhouse", "24/7 Security"],
       rating: 4.6,
@@ -261,7 +261,7 @@ const FeaturedProperties = () => {
       location: "Dehradun",
       price: "₹80 Lakh",
       originalPrice: "₹90 Lakh",
-      type: "Sale",
+      purpose: "Sale",
       image: "/images/plot.jpg",
       features: ["Main Road Facing", "High Footfall", "Clear Title"],
       rating: 4.9,
@@ -298,9 +298,9 @@ const FeaturedProperties = () => {
                       New
                     </span>
                   )}
-                  <span className={`px-3 py-1 rounded-full text-sm font-semibold ${property.type === 'Rent' ? 'bg-blue-500 text-white' : 'bg-orange-500 text-white'
+                  <span className={`px-3 py-1 rounded-full text-sm font-semibold ${property.purpose === 'Rent' ? 'bg-blue-500 text-white' : 'bg-orange-500 text-white'
                     }`}>
-                    For {property.type}
+                    For {property.purpose}
                   </span>
                 </div>
 

@@ -1,11 +1,46 @@
+import { Op } from 'sequelize';
 import { Property } from '../config/db.js';
+
+const createFilterQuery = (query) => {
+    const filters = {};
+    if (query.location) filters.location = query.location;
+    if (query.category) filters.category = query.category;
+    if (query.purpose) filters.purpose = query.purpose === 'buy' ? 'sale' : 'rent';
+
+    if (query.minPrice || query.maxPrice || query.budget) {
+        filters.price = {};
+        if (query.budget) {
+            filters.price['$gte'] = Number(query.budget / 10);
+            filters.price['$lte'] = Number(query.budget);
+        }
+        if (query.minPrice) filters.price['$gte'] = Number(query.minPrice);
+        if (query.maxPrice) filters.price['$lte'] = Number(query.maxPrice);
+    }
+
+    if (query.keywords) {
+        const list = query.keywords.replace(/\s{2,}/g, " ").split(' ');
+        // Build an array of keyword conditions for title and description
+        filters[Op.or] = list.map(keyword => ({
+            [Op.or]: [
+                { title: { [Op.like]: `%${keyword}%` } },
+                { description: { [Op.like]: `%${keyword}%` } }
+            ]
+        }));
+    }
+
+    return filters;
+}
 
 export const getAllProperties = async (req, res) => {
     const query = req.query; // Extract query parameters for filtering, sorting, etc.
 
+    // Create filter query based on request parameters
+    const filters = createFilterQuery(query);
+    console.log('filter parameters:', query, filters);
+
     try {
         const properties = await Property.findAll({
-            where: query,
+            where: filters,
             order: [['createdAt', 'DESC']]
         });
 
@@ -16,10 +51,10 @@ export const getAllProperties = async (req, res) => {
             totalCount: properties.length
         });
     } catch (error) {
-        console.error('Error fetching properties:', error);
+        console.error('Error fetching properties:', error.message);
         res.status(500).json({
             success: false,
-            message: 'Internal server error'
+            message: error.message || 'Internal server error'
         });
     }
 }
@@ -40,10 +75,10 @@ export const getPropertyById = async (req, res) => {
             property: property
         });
     } catch (error) {
-        console.error('Error fetching property:', error);
+        console.error('Error fetching property:', error.message);
         res.status(500).json({
             success: false,
-            message: 'Internal server error'
+            message: error.message || 'Internal server error'
         });
     }
 }
@@ -70,10 +105,10 @@ export const createProperty = async (req, res) => {
             property: newProperty
         });
     } catch (error) {
-        console.error('Error creating property:', error);
+        console.error('Error creating property:', error.message);
         res.status(500).json({
             success: false,
-            message: 'Internal server error'
+            message: error.message || 'Internal server error'
         });
     }
 }
@@ -101,10 +136,10 @@ export const updateProperty = async (req, res) => {
             property: property
         });
     } catch (error) {
-        console.error('Error updating property:', error);
+        console.error('Error updating property:', error.message);
         res.status(500).json({
             success: false,
-            message: 'Internal server error'
+            message: error.message || 'Internal server error'
         });
     }
 }
@@ -125,10 +160,10 @@ export const deleteProperty = async (req, res) => {
             message: 'Property deleted successfully'
         });
     } catch (error) {
-        console.error('Error deleting property:', error);
+        console.error('Error deleting property:', error.message);
         res.status(500).json({
             success: false,
-            message: 'Internal server error'
+            message: error.message || 'Internal server error'
         });
     }
 }

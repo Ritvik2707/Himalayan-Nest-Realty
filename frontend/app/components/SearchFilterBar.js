@@ -1,8 +1,9 @@
 "use client";
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useAppContext } from '../context/AppContext';
 
-const SearchFilterBar = ({ onSearch, initialFilters = {} }) => {
+const SearchFilterBar = ({ onSearch, initialFilters = {}, searchParams }) => {
     const router = useRouter();
 
     const [filters, setFilters] = useState({
@@ -10,10 +11,10 @@ const SearchFilterBar = ({ onSearch, initialFilters = {} }) => {
         category: initialFilters.category || '',
         minPrice: initialFilters.minPrice || '',
         maxPrice: initialFilters.maxPrice || '',
-        type: initialFilters.type || 'buy'
+        purpose: initialFilters.purpose || 'buy'
     });
 
-    const [isLoading, setIsLoading] = useState(false);
+    const { loading, setLoading } = useAppContext();
 
     const handleFilterChange = (key, value) => {
         setFilters(prev => ({
@@ -23,7 +24,7 @@ const SearchFilterBar = ({ onSearch, initialFilters = {} }) => {
     };
 
     const handleSearch = async () => {
-        setIsLoading(true);
+        setLoading(true);
 
         try {
             // Create URLSearchParams for navigation
@@ -47,7 +48,7 @@ const SearchFilterBar = ({ onSearch, initialFilters = {} }) => {
         } catch (error) {
             console.error('Search error:', error);
         } finally {
-            setIsLoading(false);
+            setLoading(false);
         }
     };
 
@@ -57,15 +58,12 @@ const SearchFilterBar = ({ onSearch, initialFilters = {} }) => {
             category: '',
             minPrice: '',
             maxPrice: '',
-            type: 'buy'
+            purpose: 'buy'
         };
-        setFilters(clearedFilters);
+        console.log('Clearing filters:', searchParams);
 
-        if (onSearch) {
-            onSearch(clearedFilters);
-        } else {
-            router.push('/properties');
-        }
+        if (searchParams.size > 0) router.replace('/properties');
+        setFilters(clearedFilters);
     };
 
     return (
@@ -73,14 +71,14 @@ const SearchFilterBar = ({ onSearch, initialFilters = {} }) => {
             {/* Buy/Rent Toggle */}
             <div className="flex gap-2 mb-4">
                 <button
-                    className={`px-4 py-2 rounded ${filters.type === 'buy' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700'}`}
-                    onClick={() => handleFilterChange('type', 'buy')}
+                    className={`px-4 py-2 rounded ${filters.purpose === 'buy' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+                    onClick={() => handleFilterChange('purpose', 'buy')}
                 >
                     Buy
                 </button>
                 <button
-                    className={`px-4 py-2 rounded ${filters.type === 'rent' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700'}`}
-                    onClick={() => handleFilterChange('type', 'rent')}
+                    className={`px-4 py-2 rounded ${filters.purpose === 'rent' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+                    onClick={() => handleFilterChange('purpose', 'rent')}
                 >
                     Rent
                 </button>
@@ -127,13 +125,13 @@ const SearchFilterBar = ({ onSearch, initialFilters = {} }) => {
 
                 <button
                     onClick={handleSearch}
-                    disabled={isLoading}
-                    className={`px-6 py-2 rounded transition-colors ${isLoading
+                    disabled={loading}
+                    className={`px-6 py-2 rounded transition-colors ${loading
                         ? 'bg-gray-400 cursor-not-allowed'
                         : 'bg-green-600 hover:bg-green-700'
                         } text-white`}
                 >
-                    {isLoading ? 'Searching...' : 'Search'}
+                    {loading ? 'Searching...' : 'Search'}
                 </button>
 
                 <button

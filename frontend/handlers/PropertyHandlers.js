@@ -17,6 +17,8 @@ export const getProperties = async (filters = {}) => {
             }
         });
 
+        console.log('Fetching properties with params:', params);
+
         const response = await api.get('/properties', { params });
         const data = response.data;
 
@@ -30,8 +32,7 @@ export const getProperties = async (filters = {}) => {
         const errorMessage = error.response?.data?.message || error.message || 'Failed to fetch properties';
         return {
             success: false,
-            error: errorMessage,
-            message: 'Failed to fetch properties'
+            message: errorMessage,
         };
     }
 };
@@ -207,75 +208,6 @@ export const deleteProperty = async (propertyId) => {
 };
 
 /**
- * Search Properties
- * @param {Object} searchParams - Search parameters
- * @returns {Promise<Object>} Search results response
- */
-export const searchProperties = async (searchParams) => {
-    try {
-        const params = {};
-
-        // Add search parameters
-        if (searchParams.location) params.location = searchParams.location;
-        if (searchParams.category) params.category = searchParams.category;
-        if (searchParams.type) params.type = searchParams.type;
-        if (searchParams.budget) params.budget = searchParams.budget;
-        if (searchParams.keywords) params.keywords = searchParams.keywords;
-        if (searchParams.minPrice) params.minPrice = searchParams.minPrice;
-        if (searchParams.maxPrice) params.maxPrice = searchParams.maxPrice;
-        if (searchParams.bedrooms) params.bedrooms = searchParams.bedrooms;
-        if (searchParams.bathrooms) params.bathrooms = searchParams.bathrooms;
-        if (searchParams.furnished) params.furnished = searchParams.furnished;
-
-        const response = await api.get('/properties/search', { params });
-        const data = response.data;
-
-        return {
-            success: true,
-            data: data,
-            message: 'Search completed successfully'
-        };
-    } catch (error) {
-        console.error('Search properties error:', error);
-        const errorMessage = error.response?.data?.message || error.message || 'Search failed';
-        return {
-            success: false,
-            error: errorMessage,
-            message: 'Search failed'
-        };
-    }
-};
-
-/**
- * Get Properties by Location
- * @param {string} location - Location name
- * @param {number} limit - Number of properties to fetch
- * @returns {Promise<Object>} Location properties response
- */
-export const getPropertiesByLocation = async (location, limit = 10) => {
-    try {
-        const response = await api.get(`/properties/location/${encodeURIComponent(location)}`, {
-            params: { limit }
-        });
-        const data = response.data;
-
-        return {
-            success: true,
-            data: data,
-            message: 'Properties fetched successfully'
-        };
-    } catch (error) {
-        console.error('Get properties by location error:', error);
-        const errorMessage = error.response?.data?.message || error.message || 'Failed to fetch properties by location';
-        return {
-            success: false,
-            error: errorMessage,
-            message: 'Failed to fetch properties by location'
-        };
-    }
-};
-
-/**
  * Get User's Properties
  * @returns {Promise<Object>} User properties response
  */
@@ -346,56 +278,6 @@ export const uploadPropertyImages = async (propertyId, formData) => {
             success: false,
             error: errorMessage,
             message: 'Failed to upload images'
-        };
-    }
-};
-
-/**
- * Get Property Categories
- * @returns {Promise<Object>} Categories response
- */
-export const getPropertyCategories = async () => {
-    try {
-        const response = await api.get('/properties/categories');
-        const data = response.data;
-
-        return {
-            success: true,
-            data: data,
-            message: 'Categories fetched successfully'
-        };
-    } catch (error) {
-        console.error('Get property categories error:', error);
-        const errorMessage = error.response?.data?.message || error.message || 'Failed to fetch categories';
-        return {
-            success: false,
-            error: errorMessage,
-            message: 'Failed to fetch categories'
-        };
-    }
-};
-
-/**
- * Get Property Locations
- * @returns {Promise<Object>} Locations response
- */
-export const getPropertyLocations = async () => {
-    try {
-        const response = await api.get('/properties/locations');
-        const data = response.data;
-
-        return {
-            success: true,
-            data: data,
-            message: 'Locations fetched successfully'
-        };
-    } catch (error) {
-        console.error('Get property locations error:', error);
-        const errorMessage = error.response?.data?.message || error.message || 'Failed to fetch locations';
-        return {
-            success: false,
-            error: errorMessage,
-            message: 'Failed to fetch locations'
         };
     }
 };

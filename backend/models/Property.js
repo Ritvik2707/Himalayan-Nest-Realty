@@ -16,7 +16,7 @@ const PropertyModel = (sequelize) => {
             type: DataTypes.TEXT,
             allowNull: true,
         },
-        type: {
+        category: {
             type: DataTypes.STRING,
             allowNull: false,
             values: ['flat', 'house', 'plot', 'pg', 'farmhouse', 'villa', 'office', 'shop', 'other'],

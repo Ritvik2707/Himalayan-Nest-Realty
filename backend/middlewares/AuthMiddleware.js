@@ -17,8 +17,8 @@ const AuthMiddleware = async (req, res, next) => {
         req.user = user; // Attach user info to request object
         next(); // Proceed to the next middleware or route handler
     } catch (error) {
-        console.error('Token verification failed:', error);
-        return res.status(401).json({ message: 'Invalid token' });
+        // console.error('Token verification failed:', error.message);
+        return res.status(401).json({ message: error.message || 'Invalid token' });
     }
 }
 

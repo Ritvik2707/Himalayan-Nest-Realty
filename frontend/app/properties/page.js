@@ -32,116 +32,66 @@ const PropertiesContent = () => {
     const [totalPages, setTotalPages] = useState(1);
     const searchParams = useSearchParams();
     const { loading, setLoading } = useAppContext();
+    const [filters, setFilters] = useState(Object.fromEntries(searchParams.entries()));
 
     // Load properties on component mount and when search params change
     useEffect(() => {
         loadProperties();
     }, [searchParams]);
 
-    const loadProperties = async () => {
+    const loadProperties = async (searchFilters) => {
         setLoading(true);
         setError('');
 
-        try {
-            // Get search parameters from URL
-            const filters = {};
-            searchParams.forEach((value, key) => {
-                filters[key] = value;
-            });
+        let result = await getProperties(searchFilters || filters);
 
-            let result;
-            if (Object.keys(filters).length > 0) {
-                // Use search if there are filters
-                result = await searchProperties(filters);
-            } else {
-                // Get all properties if no filters
-                result = await getProperties();
-            }
-
-            if (result && result.success) {
-                // Handle successful response
-                const propertiesData = result.data?.properties || result.data || [];
-                setProperties(propertiesData);
-                setTotalPages(result.data?.totalPages || 1);
-                setCurrentPage(result.data?.currentPage || 1);
-            } else {
-                // Handle API failure
-                const errorMessage = result?.error || result?.message || 'Failed to load properties';
-                setError(errorMessage);
-                // Fallback to static data if API fails
-                setProperties(staticProperties);
-            }
-        } catch (error) {
-            console.error('Error loading properties:', error);
-            setError('Failed to load properties');
-            // Fallback to static data on error
+        if (result && result.success) {
+            // Handle successful response
+            const propertiesData = result.data?.properties || result.data || [];
+            setProperties(propertiesData);
+            setTotalPages(result.data?.totalPages || 1);
+            setCurrentPage(result.data?.currentPage || 1);
+        } else {
+            // Handle API failure
+            const errorMessage = result?.message || 'Failed to load properties';
+            setError(errorMessage);
+            // Fallback to static data if API fails
             setProperties(staticProperties);
-        } finally {
-            setLoading(false);
         }
-    };
 
-    // Handle search from SearchFilterBar component
-    const handleSearch = async (filters) => {
-        setLoading(true);
-        setError('');
-
-        try {
-            const result = await searchProperties(filters);
-
-            if (result && result.success) {
-                // Handle successful search response
-                const propertiesData = result.data?.properties || result.data || [];
-                setProperties(propertiesData);
-                setTotalPages(result.data?.totalPages || 1);
-                setCurrentPage(result.data?.currentPage || 1);
-            } else {
-                // Handle search failure
-                const errorMessage = result?.error || result?.message || 'Search failed';
-                setError(errorMessage);
-                // Filter static data based on search criteria
-                filterStaticProperties(filters);
-            }
-        } catch (error) {
-            console.error('Search error:', error);
-            setError('Search failed');
-            // Filter static data based on search criteria
-            filterStaticProperties(filters);
-        } finally {
-            setLoading(false);
-        }
+        setLoading(false);
     };
 
     // Filter static properties when API search fails
-    const filterStaticProperties = (filters) => {
-        let filtered = staticProperties;
+    // const filterStaticProperties = (filters) => {
+    //     let filtered = staticProperties;
 
-        if (filters.location) {
-            filtered = filtered.filter(property =>
-                property.location.toLowerCase().includes(filters.location.toLowerCase())
-            );
-        }
+    //     if (filters.location) {
+    //         filtered = filtered.filter(property =>
+    //             property.location.toLowerCase().includes(filters.location.toLowerCase())
+    //         );
+    //     }
 
-        if (filters.category) {
-            filtered = filtered.filter(property =>
-                property.type.toLowerCase() === filters.category.toLowerCase()
-            );
-        }
+    //     if (filters.category) {
+    //         filtered = filtered.filter(property =>
+    //             property.category.toLowerCase() === filters.category.toLowerCase()
+    //         );
+    //     }
 
-        if (filters.minPrice || filters.maxPrice) {
-            filtered = filtered.filter(property => {
-                const priceStr = property.price.replace(/[₹,]/g, '').split('/')[0];
-                const price = parseInt(priceStr);
+    //     if (filters.minPrice || filters.maxPrice) {
+    //         filtered = filtered.filter(property => {
+    //             const priceStr = property.price.replace(/[₹,]/g, '').split('/')[0];
+    //             const price = parseInt(priceStr);
 
-                if (filters.minPrice && price < parseInt(filters.minPrice)) return false;
-                if (filters.maxPrice && price > parseInt(filters.maxPrice)) return false;
+    //             if (filters.minPrice && price < parseInt(filters.minPrice)) return false;
+    //             if (filters.maxPrice && price > parseInt(filters.maxPrice)) return false;
 
-                return true;
-            });
-        }
+    //             return true;
+    //         });
+    //     }
 
-        setProperties(filtered);
-    };
+    //     setProperties(filtered);
+    // };
 
     // Static fallback data
     const staticProperties = [
@@ -150,7 +100,7 @@ const PropertiesContent = () => {
             title: "2 BHK Flat for Rent",
             location: "Roorkee",
             price: "₹12,000/month",
-            type: "Flat",
+            category: "Flat",
             image: "/images/flat.jpg",
             description: "Well-maintained 2 BHK flat with modern amenities"
         },
@@ -159,7 +109,7 @@ const PropertiesContent = () => {
             title: "Residential Plot for Sale",
             location: "Dehradun",
             price: "₹25 Lakh",
-            type: "Plot",
+            category: "Plot",
             image: "/images/plot.jpg",
             description: "Prime location residential plot with clear title"
         },
@@ -168,7 +118,7 @@ const PropertiesContent = () => {
             title: "PG Accommodation",
             location: "Haridwar",
             price: "₹5,000/month",
-            type: "PG",
+            category: "PG",
             image: "/images/PG.jpg",
             description: "Comfortable PG with all facilities included"
         },
@@ -177,7 +127,7 @@ const PropertiesContent = () => {
             title: "3 BHK House for Sale",
             location: "Rishikesh",
             price: "₹45 Lakh",
-            type: "House",
+            category: "House",
             image: "/images/house.jpg",
             description: "Spacious house with garden and parking"
         },
@@ -186,7 +136,7 @@ const PropertiesContent = () => {
             title: "2 BHK Flat for Rent",
             location: "Roorkee",
             price: "₹15,000/month",
-            type: "Flat",
+            category: "Flat",
             image: "/images/flat.jpg",
             description: "Modern flat with all amenities near IIT Roorkee"
         },
@@ -195,7 +145,7 @@ const PropertiesContent = () => {
             title: "Commercial Plot",
             location: "Dehradun",
             price: "₹80 Lakh",
-            type: "Plot",
+            category: "Plot",
             image: "/images/plot.jpg",
             description: "Prime commercial plot on main road"
         }
@@ -207,7 +157,7 @@ const PropertiesContent = () => {
             <div className="bg-white shadow-sm">
                 <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6">
                     <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6">Properties</h1>
-                    <SearchFilterBar onSearch={handleSearch} />
+                    <SearchFilterBar onSearch={getProperties} searchParams={searchParams} />
                 </div>
             </div>
 
@@ -245,7 +195,7 @@ const PropertiesContent = () => {
                                         <div className="flex justify-between items-start mb-2">
                                             <h3 className="text-base sm:text-lg font-semibold text-gray-900">{property.title}</h3>
                                             <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
-                                                {property.type}
+                                                {property.category}
                                             </span>
                                         </div>
                                         <p className="text-gray-600 text-xs sm:text-sm mb-2">{property.description}</p>
