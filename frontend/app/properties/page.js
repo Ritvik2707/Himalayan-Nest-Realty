@@ -194,7 +194,7 @@ const PropertiesContent = () => {
                                         <Image
                                             src={property.image}
                                             alt={property.title}
-                                            onError={(e) => e.target.src = fetchImageUrl('/uploads/default-property.jpg')}
+                                            onError={(e) => e.target.src = 'default-property.jpg'}
                                             fill sizes='(100vw) 100vw, (min-width: 640px) 50vw, (min-width: 1024px) 33vw'
                                             className="object-cover"
                                             unoptimized
