@@ -48,9 +48,13 @@ const PropertiesContent = () => {
 
         if (result && result.success) {
             // Handle successful response
-            const propertiesData = result.data?.properties || result.data || [];
+            let propertiesData = result.data?.properties || result.data || [];
+            propertiesData = propertiesData.map(property => ({
+                ...property,
+                image: fetchImageUrl(property.image || '/uploads/properties/default.jpg')
+            }));
+
             setProperties(propertiesData);
-            console.log('Properties loaded:', propertiesData);
             setTotalPages(result.data?.totalPages || 1);
             setCurrentPage(result.data?.currentPage || 1);
         } else {
@@ -183,37 +187,34 @@ const PropertiesContent = () => {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                            {properties.map((property) => {
-                                const imageUrl = fetchImageUrl(property.images[0]);
-                                return (
-                                    <div key={property.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-                                        <div className="relative h-40 sm:h-48">
-                                            <Image
-                                                src={imageUrl}
-                                                alt={property.title}
-                                                fill sizes='(100vw) 100vw, (min-width: 640px) 50vw, (min-width: 1024px) 33vw'
-                                                className="object-cover"
-                                            />
-                                        </div>
-                                        <div className="p-3 sm:p-4">
-                                            <div className="flex justify-between items-start mb-2">
-                                                <h3 className="text-base sm:text-lg font-semibold text-gray-900">{property.title}</h3>
-                                                <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
-                                                    {property.category}
-                                                </span>
-                                            </div>
-                                            <p className="text-gray-600 text-xs sm:text-sm mb-2">{property.description}</p>
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-gray-500 text-xs sm:text-sm">{property.location}</span>
-                                                <span className="text-base sm:text-lg font-bold text-green-600">{property.price}</span>
-                                            </div>
-                                            <button className="w-full mt-2 sm:mt-3 bg-green-600 text-white py-2 rounded hover:bg-green-700 transition-colors text-sm sm:text-base">
-                                                View Details
-                                            </button>
-                                        </div>
+                            {properties.map((property) => (
+                                <div key={property.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                                    <div className="relative h-40 sm:h-48">
+                                        <Image
+                                            src={property.image}
+                                            alt={property.title}
+                                            fill sizes='(100vw) 100vw, (min-width: 640px) 50vw, (min-width: 1024px) 33vw'
+                                            className="object-cover"
+                                        />
                                     </div>
-                                )
-                            })}
+                                    <div className="p-3 sm:p-4">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <h3 className="text-base sm:text-lg font-semibold text-gray-900">{property.title}</h3>
+                                            <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                                                {property.category}
+                                            </span>
+                                        </div>
+                                        <p className="text-gray-600 text-xs sm:text-sm mb-2">{property.description}</p>
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-gray-500 text-xs sm:text-sm">{property.location}</span>
+                                            <span className="text-base sm:text-lg font-bold text-green-600">₹{property.price}</span>
+                                        </div>
+                                        <button className="w-full mt-2 sm:mt-3 bg-green-600 text-white py-2 rounded hover:bg-green-700 transition-colors text-sm sm:text-base">
+                                            View Details
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
 
                         {/* Load More Button */}

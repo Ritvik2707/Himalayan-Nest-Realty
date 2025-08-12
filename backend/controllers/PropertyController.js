@@ -41,10 +41,19 @@ export const getAllProperties = async (req, res) => {
     console.log('filter parameters:', query, filters);
 
     try {
-        const properties = await Property.findAll({
+        let properties = await Property.findAll({
             where: filters,
+            attributes: {
+                exclude: ['dealer_id']
+            },
             order: [['createdAt', 'DESC']]
         });
+
+        properties = properties.map(p => ({
+            ...p.toJSON(),
+            image: p.images?.[0] || null,
+            images: null
+        }));
 
         res.status(200).json({
             success: true,
