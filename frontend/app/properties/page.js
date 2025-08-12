@@ -47,7 +47,7 @@ const PropertiesContent = () => {
             let propertiesData = result.data?.properties || result.data || [];
             propertiesData = propertiesData.map(property => ({
                 ...property,
-                image: fetchImageUrl(property.image || '/uploads/properties/default.jpg')
+                image: fetchImageUrl(property.image || '/uploads/default-property.jpg')
             }));
 
             setProperties(propertiesData);
