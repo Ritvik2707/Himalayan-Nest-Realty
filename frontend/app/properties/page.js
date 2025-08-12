@@ -196,6 +196,7 @@ const PropertiesContent = () => {
                                             alt={property.title}
                                             fill sizes='(100vw) 100vw, (min-width: 640px) 50vw, (min-width: 1024px) 33vw'
                                             className="object-cover"
+                                            unoptimized
                                         />
                                     </div>
                                     <div className="p-3 sm:p-4">
