@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import { createPropertyWithImages } from "../../handlers/PropertyUploadHandlers";
 
-const page = () => {
+const Page = () => {
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -97,4 +97,4 @@ const page = () => {
     );
 }
 
-export default page
+export default Page

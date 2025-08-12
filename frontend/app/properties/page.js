@@ -35,10 +35,6 @@ const PropertiesContent = () => {
     const { loading, setLoading } = useAppContext();
     const [filters, setFilters] = useState(Object.fromEntries(searchParams.entries()));
 
-    // Load properties on component mount and when search params change
-    useEffect(() => {
-        loadProperties();
-    }, [searchParams]);
 
     const loadProperties = async (searchFilters) => {
         setLoading(true);
@@ -67,6 +63,11 @@ const PropertiesContent = () => {
 
         setLoading(false);
     };
+
+    // Load properties on component mount and when search params change
+    useEffect(() => {
+        loadProperties();
+    }, [searchParams]);
 
     // Filter static properties when API search fails
     // const filterStaticProperties = (filters) => {
