@@ -76,6 +76,10 @@ export const handleMulterError = (error, req, res, next) => {
                 message: 'Unexpected field name for file upload.'
             });
         }
+        return res.status(500).json({
+            success: false,
+            message: 'Multer error: ' + error.message
+        });
     }
 
     if (error.message.includes('Invalid file type')) {

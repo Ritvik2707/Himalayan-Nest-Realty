@@ -49,6 +49,7 @@ const PropertiesContent = () => {
                 ...property,
                 image: fetchImageUrl(property.image || '/uploads/default-property.jpg')
             }));
+            // console.log('Fetched properties:', propertiesData);
 
             setProperties(propertiesData);
             setTotalPages(result.data?.totalPages || 1);
