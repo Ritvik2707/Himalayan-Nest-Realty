@@ -19,6 +19,11 @@ export const metadata = {
   title: "Himalayan Nest - Your Trusted Real Estate Partner",
   description: "Find your perfect property in Uttarakhand. Buy, rent, or list properties in Roorkee, Haridwar, Dehradun, Rishikesh and nearby areas.",
   keywords: "real estate, property, Uttarakhand, Roorkee, Haridwar, Dehradun, Rishikesh, buy property, rent property, property listing",
+  icons: {
+    icon: "/logos/himalayan-white.png",
+    apple: "/logos/himalayan-white.png",
+    shortcut: "/logos/himalayan-white.png",
+  },
 };
 
 export default function RootLayout({ children }) {

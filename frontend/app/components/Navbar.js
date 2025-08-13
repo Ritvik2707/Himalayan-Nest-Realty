@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useAppContext } from '../context/AppContext'
 import { logoutUser } from '../../handlers/AuthHandlers'
+import Image from 'next/image'
 import './styles.css'
 
 const Navbar = () => {
@@ -45,7 +46,8 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex items-center">
+          <div className="flex items-center gap-1">
+            <Image src={'/logos/himalayan-logo.png'} alt="Himalayan Nest Logo" width={40} height={40} className="mr-2" />
             <Link href="/" className="text-2xl font-bold text-green-700">
               Himalayan Nest
             </Link>
