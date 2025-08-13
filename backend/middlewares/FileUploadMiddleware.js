@@ -1,29 +1,23 @@
 import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
-import { fileURLToPath } from 'url';
+import cloudinary from '../config/cloudinary.js';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Ensure uploads directory exists
-const uploadsDir = path.join(__dirname, '../uploads/properties');
-if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
-}
-
-// Configure multer storage
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, uploadsDir);
-    },
-    filename: (req, file, cb) => {
-        // Generate random filename with timestamp and random string
-        const timestamp = Date.now();
-        const randomString = Math.random().toString(36).substring(2, 15);
-        const extension = path.extname(file.originalname);
-        const filename = `property_${timestamp}_${randomString}${extension}`;
-        cb(null, filename);
+// Configure Cloudinary storage for multer
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'himalayan-nest/properties', // Organized folder structure
+        allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+        transformation: [
+            { width: 1200, height: 800, crop: 'limit' }, // Resize large images
+            { quality: 'auto' } // Auto quality optimization
+        ],
+        public_id: (req, file) => {
+            // Generate unique filename
+            const timestamp = Date.now();
+            const randomString = Math.random().toString(36).substring(2, 15);
+            return `property_${timestamp}_${randomString}`;
+        }
     }
 });
 
@@ -45,11 +39,11 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-// Configure multer
+// Configure multer with Cloudinary storage
 const upload = multer({
     storage: storage,
     limits: {
-        fileSize: 5 * 1024 * 1024, // 5MB per file
+        fileSize: 10 * 1024 * 1024, // 10MB per file (Cloudinary handles optimization)
         files: 10 // Maximum 10 files
     },
     fileFilter: fileFilter
@@ -67,7 +61,7 @@ export const handleMulterError = (error, req, res, next) => {
         if (error.code === 'LIMIT_FILE_SIZE') {
             return res.status(400).json({
                 success: false,
-                message: 'File size too large. Maximum size is 5MB per file.'
+                message: 'File size too large. Maximum size is 10MB per file.'
             });
         }
         if (error.code === 'LIMIT_FILE_COUNT') {
@@ -97,11 +91,29 @@ export const handleMulterError = (error, req, res, next) => {
     });
 };
 
-// Utility function to delete uploaded files
-export const deleteUploadedFiles = (filePaths) => {
-    filePaths.forEach(filePath => {
-        if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
-        }
-    });
+// Utility function to delete images from Cloudinary
+export const deleteCloudinaryImages = async (imageUrls) => {
+    try {
+        const deletePromises = imageUrls.map(async (imageUrl) => {
+            // Extract public_id from Cloudinary URL
+            const publicId = extractPublicIdFromUrl(imageUrl);
+            if (publicId) {
+                return await cloudinary.uploader.destroy(publicId);
+            }
+        });
+
+        const results = await Promise.all(deletePromises);
+        console.log('Cloudinary deletion results:', results);
+        return results;
+    } catch (error) {
+        console.error('Error deleting images from Cloudinary:', error);
+        throw error;
+    }
+};
+
+// Helper function to extract public_id from Cloudinary URL
+const extractPublicIdFromUrl = (url) => {
+    const parts = url.split('/');
+    // Get the last part and remove the file extension
+    return parts.pop().split('.')[0];
 };

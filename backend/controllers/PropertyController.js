@@ -1,7 +1,6 @@
 import { Op } from 'sequelize';
 import { Property } from '../config/db.js';
-import path from 'path';
-import { deleteUploadedFiles } from '../middlewares/FileUploadMiddleware.js';
+import { deleteCloudinaryImages } from '../middlewares/FileUploadMiddleware.js';
 
 const createFilterQuery = (query) => {
     const filters = {};
@@ -102,8 +101,8 @@ export const createProperty = async (req, res) => {
         if (!title || !category || !purpose || !location || !price) {
             // Clean up uploaded files if validation fails
             if (req.files && req.files.length > 0) {
-                const filePaths = req.files.map(file => file.path);
-                deleteUploadedFiles(filePaths);
+                const cloudinaryUrls = req.files.map(file => file.path); // Cloudinary returns full URL in file.path
+                await deleteCloudinaryImages(cloudinaryUrls);
             }
             return res.status(400).json({
                 success: false,
@@ -111,12 +110,12 @@ export const createProperty = async (req, res) => {
             });
         }
 
-        // Process uploaded images
+        // Process uploaded images from Cloudinary
         let imageUrls = [];
         if (req.files && req.files.length > 0) {
             imageUrls = req.files.map(file => {
-                // Return relative path for storing in database
-                return `/uploads/properties/${file.filename}`;
+                // Cloudinary returns the full URL in file.path
+                return file.path;
             });
         }
 
@@ -145,8 +144,8 @@ export const createProperty = async (req, res) => {
 
         // Clean up uploaded files if database operation fails
         if (req.files && req.files.length > 0) {
-            const filePaths = req.files.map(file => file.path);
-            deleteUploadedFiles(filePaths);
+            const cloudinaryUrls = req.files.map(file => file.path);
+            await deleteCloudinaryImages(cloudinaryUrls);
         }
 
         res.status(500).json({
@@ -197,6 +196,18 @@ export const deleteProperty = async (req, res) => {
                 message: 'Property not found'
             });
         }
+
+        // Delete images from Cloudinary before deleting property
+        if (property.images && property.images.length > 0) {
+            try {
+                await deleteCloudinaryImages(property.images);
+                console.log('Images deleted from Cloudinary successfully');
+            } catch (cloudinaryError) {
+                console.error('Error deleting images from Cloudinary:', cloudinaryError);
+                // Continue with property deletion even if image deletion fails
+            }
+        }
+
         await property.destroy();
         res.status(200).json({
             success: true,
