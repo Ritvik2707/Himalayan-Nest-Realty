@@ -4,7 +4,6 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "install": "npm install --legacy-peer-deps",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon main.js",
     "start": "node main.js"
