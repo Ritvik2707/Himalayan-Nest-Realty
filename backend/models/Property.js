@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 
 const PropertyModel = (sequelize) => {
-    return sequelize.define("Properties", {
+    const Property = sequelize.define("Properties", {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4, // Automatically generate a UUID
@@ -53,6 +53,8 @@ const PropertyModel = (sequelize) => {
             defaultValue: DataTypes.NOW, // Automatically set the creation date
         },
     });
+
+    return Property;
 }
 
 export default PropertyModel

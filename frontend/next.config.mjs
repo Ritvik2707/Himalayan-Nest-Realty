@@ -16,6 +16,7 @@ const nextConfig = {
             }
         ],
     },
+    allowedDevOrigins: [process.env.NEXT_PUBLIC_CROSS_ORIGIN],
 };
 
 export default nextConfig;

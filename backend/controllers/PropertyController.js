@@ -1,5 +1,5 @@
 import { Op } from 'sequelize';
-import { Property } from '../config/db.js';
+import { Property, User } from '../config/db.js';
 import { deleteCloudinaryImages } from '../middlewares/FileUploadMiddleware.js';
 
 const createFilterQuery = (query) => {
@@ -72,7 +72,15 @@ export const getAllProperties = async (req, res) => {
 export const getPropertyById = async (req, res) => {
     const { id } = req.params;
     try {
-        const property = await Property.findByPk(id);
+        let property = await Property.findByPk(id);
+
+        if (property.dealer_id) {
+            const dealer = await User.findByPk(property.dealer_id, {
+                attributes: ['id', 'name', 'email', 'phone']
+            });
+            property = { ...property.toJSON(), dealer: dealer }; // Include dealer info
+        }
+
         if (!property) {
             return res.status(404).json({
                 success: false,

@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 
 const UserModel = (sequelize) => {
-    return sequelize.define("Users", {
+    const User = sequelize.define("Users", {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4, // Automatically generate a UUID
@@ -34,6 +34,8 @@ const UserModel = (sequelize) => {
             defaultValue: DataTypes.NOW, // Automatically set the creation date
         },
     });
+
+    return User;
 }
 
 export default UserModel;

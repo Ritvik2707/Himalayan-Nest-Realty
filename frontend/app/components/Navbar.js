@@ -47,7 +47,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center gap-1">
-            <Image src={'/logos/himalayan-logo.png'} alt="Himalayan Nest Logo" width={40} height={40} className="mr-2" />
+            <Image src={'/logos/himalayan-logo.png'} alt="Himalayan Nest Logo" width={40} height={40} className="mr-2 w-auto" />
             <Link href="/" className="text-2xl font-bold text-green-700">
               Himalayan Nest
             </Link>
@@ -73,6 +73,11 @@ const Navbar = () => {
                 <span className="text-gray-700 font-medium">
                   Welcome, {user.firstName || user.name || 'User'}
                 </span>
+
+                <Link href="/dashboard" className="block mx-3 my-2 px-4 py-2 bg-green-700 text-white rounded hover:bg-green-800 font-medium text-center transition-colors">
+                  Dashboard
+                </Link>
+
                 <button
                   onClick={handleLogout}
                   className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 font-medium transition-colors"
@@ -108,7 +113,7 @@ const Navbar = () => {
         {/* Mobile Navigation Menu */}
         {isMenuOpen && (
           <div className="sm:hidden absolute top-16 left-0 right-0 bg-white shadow-lg border-t z-50">
-            <div className="px-2 pt-2 pb-3 space-y-1">
+            <div className="flex flex-col px-2 pt-2 pb-3 space-y-1">
               <Link
                 href="/"
                 className="block px-3 py-2 text-gray-700 hover:text-green-700 hover:bg-gray-50 font-medium transition-colors"
@@ -143,6 +148,11 @@ const Navbar = () => {
                   <div className="px-3 py-2 text-gray-700 font-medium border-t">
                     Welcome, {user.firstName || user.name || 'User'}
                   </div>
+
+                  <Link href="/dashboard" className="block mx-3 my-2 px-4 py-2 bg-green-700 text-white rounded hover:bg-green-800 font-medium text-center transition-colors">
+                    Dashboard
+                  </Link>
+
                   <button
                     onClick={() => {
                       handleLogout();

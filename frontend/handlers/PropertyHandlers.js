@@ -75,7 +75,7 @@ export const getPropertyById = async (propertyId) => {
             message: data.message || 'Property fetched successfully'
         };
     } catch (error) {
-        console.error('Get property by ID error:', error);
+        // console.error('Get property by ID error:', error);
         const errorMessage = error.response?.data?.message || error.message || 'Failed to fetch property';
         return {
             success: false,

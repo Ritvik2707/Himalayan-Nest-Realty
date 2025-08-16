@@ -6,7 +6,10 @@ import { useAppContext } from '../context/AppContext';
 const SearchFilterBar = ({ onSearch, searchParams }) => {
     const router = useRouter();
 
-    const [filters, setFilters] = useState({});
+    const [filters, setFilters] = useState({
+        location: '', category: '', minPrice: '', maxPrice: '', keywords: '',
+        purpose: 'buy' // Default to 'buy'
+    });
     const { loading, setLoading } = useAppContext();
 
     useEffect(() => {

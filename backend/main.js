@@ -1,5 +1,6 @@
 import express from 'express';
 import { connectToDB } from './config/db.js';
+import { registerRelations } from './models/index.js';
 import AuthRouter from './routes/AuthRoutes.js';
 import PropertyRouter from './routes/PropertyRoutes.js';
 import bodyParser from 'body-parser';
@@ -29,12 +30,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Serve static files from uploads directory
 app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
 
+registerRelations(); // Register model relations
 connectToDB();
 
 app.use('/api/auth', AuthRouter);
 app.use('/api/properties', PropertyRouter);
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`App is listening at port ${PORT}`);
+const HOST = process.env.HOST || 'localhost';
+app.listen(PORT, HOST, () => {
+    console.log(`App is listening at host ${HOST}, port ${PORT}`);
 });

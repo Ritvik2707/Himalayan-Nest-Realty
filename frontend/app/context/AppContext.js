@@ -37,11 +37,6 @@ export const AppProvider = ({ children }) => {
         setUser(null);
     };
 
-    // Helper function to check if user is authenticated
-    const isAuthenticated = () => {
-        return user !== null;
-    };
-
     const context = {
         // User state
         user,
