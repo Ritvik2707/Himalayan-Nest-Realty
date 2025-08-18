@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { updatePropertyWithImages } from '../../../handlers/PropertyUploadHandlers';
+import { updateProperty } from '../../../handlers/PropertyHandlers';
 
 const EditProperty = ({ property, onClose, onUpdate }) => {
     const [formData, setFormData] = useState({
@@ -99,7 +99,7 @@ const EditProperty = ({ property, onClose, onUpdate }) => {
         setMessage({ type: '', content: '' });
 
         try {
-            const result = await updatePropertyWithImages(
+            const result = await updateProperty(
                 property.id,
                 formData,
                 selectedFiles,
@@ -107,19 +107,17 @@ const EditProperty = ({ property, onClose, onUpdate }) => {
             );
 
             if (result && result.success) {
-                setMessage({
-                    type: 'success',
-                    content: 'Property updated successfully!'
-                });
+                // setMessage({
+                //     type: 'success',
+                //     content: 'Property updated successfully!'
+                // });
 
                 // Call parent update function
-                if (onUpdate) {
-                    onUpdate(result.property);
+                if (onUpdate && result.data?.property) {
+                    onUpdate(result.data.property);
                 }
 
-                setTimeout(() => {
-                    onClose();
-                }, 2000);
+                onClose();
 
             } else {
                 setMessage({
@@ -141,8 +139,8 @@ const EditProperty = ({ property, onClose, onUpdate }) => {
     if (!property) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 sm:p-4">
+            <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[100vh] sm:max-h-[90vh] overflow-y-auto">
                 <div className="p-6">
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-2xl font-bold text-gray-900">Edit Property</h2>
@@ -158,8 +156,8 @@ const EditProperty = ({ property, onClose, onUpdate }) => {
 
                     {message.content && (
                         <div className={`mb-6 p-4 rounded-lg ${message.type === 'success'
-                                ? 'bg-green-50 text-green-700 border border-green-200'
-                                : 'bg-red-50 text-red-700 border border-red-200'
+                            ? 'bg-green-50 text-green-700 border border-green-200'
+                            : 'bg-red-50 text-red-700 border border-red-200'
                             }`}>
                             {message.content}
                         </div>
@@ -282,8 +280,8 @@ const EditProperty = ({ property, onClose, onUpdate }) => {
                                                 src={imageUrl}
                                                 alt={`Property ${index + 1}`}
                                                 className={`w-full h-24 object-cover rounded-lg border ${imagesToDelete.includes(imageUrl)
-                                                        ? 'border-red-300 opacity-50'
-                                                        : 'border-gray-200'
+                                                    ? 'border-red-300 opacity-50'
+                                                    : 'border-gray-200'
                                                     }`}
                                             />
                                             {imagesToDelete.includes(imageUrl) ? (
@@ -370,8 +368,8 @@ const EditProperty = ({ property, onClose, onUpdate }) => {
                                 type="submit"
                                 disabled={isSubmitting}
                                 className={`px-6 py-2 rounded-lg text-white font-medium transition-colors ${isSubmitting
-                                        ? 'bg-gray-400 cursor-not-allowed'
-                                        : 'bg-green-600 hover:bg-green-700'
+                                    ? 'bg-gray-400 cursor-not-allowed'
+                                    : 'bg-green-600 hover:bg-green-700'
                                     }`}
                             >
                                 {isSubmitting ? 'Updating...' : 'Update Property'}

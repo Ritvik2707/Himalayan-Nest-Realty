@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { createPropertyWithImages } from '../../../handlers/PropertyUploadHandlers';
+import { createProperty } from '../../../handlers/PropertyHandlers';
 
 const CreateProperty = () => {
     const [formData, setFormData] = useState({
@@ -65,13 +65,28 @@ const CreateProperty = () => {
         setPreviewImages(newPreviews);
     };
 
+    const handleCancel = () => {
+        setFormData({
+            title: '',
+            description: '',
+            category: '',
+            purpose: '',
+            location: '',
+            price: ''
+        });
+
+        setSelectedFiles([]);
+        setPreviewImages([]);
+        setMessage({ type: '', content: '' });
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
         setMessage({ type: '', content: '' });
 
         try {
-            const result = await createPropertyWithImages(formData, selectedFiles);
+            const result = await createProperty(formData, selectedFiles);
 
             if (result && result.success) {
                 setMessage({
@@ -122,8 +137,8 @@ const CreateProperty = () => {
                 <div className="p-6">
                     {message.content && (
                         <div className={`mb-6 p-4 rounded-lg ${message.type === 'success'
-                                ? 'bg-green-50 text-green-700 border border-green-200'
-                                : 'bg-red-50 text-red-700 border border-red-200'
+                            ? 'bg-green-50 text-green-700 border border-green-200'
+                            : 'bg-red-50 text-red-700 border border-red-200'
                             }`}>
                             {message.content}
                         </div>
@@ -296,6 +311,7 @@ const CreateProperty = () => {
                         <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
                             <button
                                 type="button"
+                                onClick={handleCancel}
                                 className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                             >
                                 Cancel
@@ -304,8 +320,8 @@ const CreateProperty = () => {
                                 type="submit"
                                 disabled={isSubmitting}
                                 className={`px-6 py-2 rounded-lg text-white font-medium transition-colors ${isSubmitting
-                                        ? 'bg-gray-400 cursor-not-allowed'
-                                        : 'bg-green-600 hover:bg-green-700'
+                                    ? 'bg-gray-400 cursor-not-allowed'
+                                    : 'bg-green-600 hover:bg-green-700'
                                     }`}
                             >
                                 {isSubmitting ? 'Creating...' : 'Create Property'}

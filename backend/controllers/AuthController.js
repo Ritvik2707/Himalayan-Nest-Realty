@@ -154,7 +154,10 @@ export const getCurrentUser = async (req, res) => {
             email: user.email,
             role: user.role,
             firstName: user.name.split(' ')[0],
-            lastName: user.name.split(' ')[1] || ''
+            lastName: user.name.split(' ')[1] || '',
+            phone: user.phone,
+            bio: user.bio,
+            createdAt: user.createdAt,
         };
 
         return res.status(200).json({
@@ -164,6 +167,59 @@ export const getCurrentUser = async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching current user:', error.message);
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+}
+
+export const updateUserProfile = async (req, res) => {
+    const { name, phone, bio } = req.body;
+
+    if (!name || !phone) {
+        return res.status(400).json({
+            success: false,
+            message: 'Please provide all required fields'
+        });
+    }
+
+    try {
+        const user = await User.findByPk(req.user.id);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        // Update user details
+        user.name = name;
+        user.phone = phone;
+        if (bio) user.bio = bio; // Bio is optional
+
+        await user.save();
+
+        // Remove password from response
+        const userResponse = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            role: user.role,
+            firstName: user.name.split(' ')[0],
+            lastName: user.name.split(' ')[1] || '',
+            bio: user.bio,
+            createdAt: user.createdAt,
+        };
+
+        return res.status(200).json({
+            success: true,
+            message: 'Profile updated successfully',
+            user: userResponse
+        });
+    } catch (error) {
+        console.error('Error updating profile:', error.message);
         return res.status(500).json({
             success: false,
             message: error.message

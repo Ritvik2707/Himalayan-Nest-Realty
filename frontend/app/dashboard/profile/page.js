@@ -1,9 +1,10 @@
 "use client";
 import React, { useState, useContext, useEffect } from 'react';
 import { useAppContext } from '@/app/context/AppContext';
+import { updateUserProfile } from '@/handlers/AuthHandlers';
 
 const ProfileManagement = () => {
-    const { user, updateUser } = useAppContext();
+    const { user, setUser } = useAppContext();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -41,14 +42,20 @@ const ProfileManagement = () => {
         setMessage({ type: '', content: '' });
 
         try {
-            // Here you would call your API to update user profile
-            // For now, we'll simulate an API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            const result = await updateUserProfile(formData);
+
+            if (!result.success) {
+                setMessage({
+                    type: 'error',
+                    content: result.error || result.data.data.message || 'Failed to update profile'
+                });
+                return;
+            }
 
             // Update context with new user data
-            updateUser({
+            setUser({
                 ...user,
-                ...formData
+                ...result.data.user
             });
 
             setMessage({
@@ -127,7 +134,7 @@ const ProfileManagement = () => {
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div>
                                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                                    Full Name *
+                                    Full Name
                                 </label>
                                 <input
                                     type="text"
@@ -154,14 +161,9 @@ const ProfileManagement = () => {
                                     id="email"
                                     name="email"
                                     value={formData.email}
-                                    onChange={handleInputChange}
-                                    disabled={!isEditing}
+                                    disabled={true} // Email is not editable
                                     required
-                                    className={`w-full px-3 py-2 border border-gray-300 rounded-lg ${isEditing
-                                        ? 'focus:ring-2 focus:ring-green-500 focus:border-transparent'
-                                        : 'bg-gray-50'
-                                        }`}
-                                    placeholder="Enter your email"
+                                    className={`w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg`}
                                 />
                             </div>
 
@@ -279,7 +281,6 @@ const ProfileManagement = () => {
                             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                                 <div>
                                     <h5 className="font-medium text-gray-900">Password</h5>
-                                    <p className="text-sm text-gray-600">Last updated 30 days ago</p>
                                 </div>
                                 <button className="px-4 py-2 text-green-600 border border-green-600 rounded-lg hover:bg-green-50 transition-colors">
                                     Change Password

@@ -165,7 +165,8 @@ export const createProperty = async (req, res) => {
 
 export const updateProperty = async (req, res) => {
     const { id } = req.params;
-    const { purpose, price, isActive } = req.body;
+    const { imagesToDelete, ...propertyData } = req.body;
+
     try {
         const property = await Property.findByPk(id);
         if (!property) {
@@ -175,18 +176,65 @@ export const updateProperty = async (req, res) => {
             });
         }
 
-        property.purpose = purpose || property.purpose;
-        property.price = price || property.price;
-        property.isActive = isActive !== undefined ? isActive : property.isActive;
+        // Check if user owns this property
+        // if (property.dealer_id !== req.user.id) {
+        //     return res.status(403).json({
+        //         success: false,
+        //         message: 'You are not authorized to update this property'
+        //     });
+        // }
+
+        // Update property fields
+        if (propertyData.title) property.title = propertyData.title;
+        if (propertyData.description !== undefined) property.description = propertyData.description;
+        if (propertyData.category) property.category = propertyData.category;
+        if (propertyData.location) property.location = propertyData.location;
+        if (propertyData.purpose) property.purpose = propertyData.purpose;
+        if (propertyData.price) property.price = parseFloat(propertyData.price);
+        if (propertyData.isActive !== undefined) property.isActive = propertyData.isActive;
+
+        // Handle image updates
+        let currentImages = property.images || [];
+
+        // Remove images marked for deletion
+        if (imagesToDelete?.length > 0) {
+            try {
+                await deleteCloudinaryImages(imagesToDelete);
+                currentImages = currentImages.filter(img => !imagesToDelete.includes(img));
+                console.log('Images deleted successfully');
+            } catch (error) {
+                console.error('Error deleting images:', error);
+                // Continue with update even if some images couldn't be deleted
+            }
+        }
+
+        // Add new images
+        if (req.files && req.files.length > 0) {
+            const newImageUrls = req.files.map(file => file.path);
+            currentImages = [...currentImages, ...newImageUrls];
+        }
+
+        // Update images array
+        property.images = currentImages;
 
         await property.save();
+
         res.status(200).json({
             success: true,
             message: 'Property updated successfully',
-            property: property
+            data: {
+                property: property
+            }
         });
     } catch (error) {
-        console.error('Error updating property:', error.message);
+        console.error('Error updating property:', error);
+
+        // Clean up uploaded files if database operation fails
+        if (req.files && req.files.length > 0) {
+            const cloudinaryUrls = req.files.map(file => file.path);
+            await deleteCloudinaryImages(cloudinaryUrls);
+        }
+
         res.status(500).json({
             success: false,
             message: error.message || 'Internal server error'
@@ -202,6 +250,14 @@ export const deleteProperty = async (req, res) => {
             return res.status(404).json({
                 success: false,
                 message: 'Property not found'
+            });
+        }
+
+        // Check if user owns this property
+        if (property.dealer_id !== req.user.id) {
+            return res.status(403).json({
+                success: false,
+                message: 'You are not authorized to delete this property'
             });
         }
 
@@ -223,6 +279,31 @@ export const deleteProperty = async (req, res) => {
         });
     } catch (error) {
         console.error('Error deleting property:', error.message);
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Internal server error'
+        });
+    }
+}
+
+export const getUserProperties = async (req, res) => {
+    try {
+        const properties = await Property.findAll({
+            where: {
+                dealer_id: req.user.id
+            },
+            order: [['createdAt', 'DESC']]
+        });
+
+        res.status(200).json({
+            success: true,
+            message: 'Your properties fetched successfully',
+            data: {
+                properties: properties
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching user properties:', error.message);
         res.status(500).json({
             success: false,
             message: error.message || 'Internal server error'

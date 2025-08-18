@@ -146,7 +146,7 @@ const QueriesManagement = () => {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+                {/* <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div> */}
             </div>
         );
     }
@@ -170,8 +170,8 @@ const QueriesManagement = () => {
 
             {message.content && (
                 <div className={`p-4 rounded-lg ${message.type === 'success'
-                        ? 'bg-green-50 text-green-700 border border-green-200'
-                        : 'bg-red-50 text-red-700 border border-red-200'
+                    ? 'bg-green-50 text-green-700 border border-green-200'
+                    : 'bg-red-50 text-red-700 border border-red-200'
                     }`}>
                     {message.content}
                 </div>
@@ -257,8 +257,8 @@ const QueriesManagement = () => {
                                                         onClick={() => handleRespond(query.id)}
                                                         disabled={isSubmitting}
                                                         className={`px-4 py-2 rounded-lg text-white font-medium transition-colors ${isSubmitting
-                                                                ? 'bg-gray-400 cursor-not-allowed'
-                                                                : 'bg-green-600 hover:bg-green-700'
+                                                            ? 'bg-gray-400 cursor-not-allowed'
+                                                            : 'bg-green-600 hover:bg-green-700'
                                                             }`}
                                                     >
                                                         {isSubmitting ? 'Sending...' : 'Send Response'}

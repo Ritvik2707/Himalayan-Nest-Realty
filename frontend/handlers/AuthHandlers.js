@@ -144,7 +144,7 @@ export const updateUserProfile = async (profileData) => {
         };
     } catch (error) {
         console.error('Update profile error:', error);
-        const errorMessage = error.response?.data?.message || error.message || 'Failed to update profile';
+        const errorMessage = error.response?.data?.message || error.data.message || 'Failed to update profile';
 
         if (error.response?.status === 401) {
             return {

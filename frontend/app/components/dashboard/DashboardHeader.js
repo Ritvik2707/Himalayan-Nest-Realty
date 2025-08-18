@@ -2,34 +2,34 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppContext } from '../../context/AppContext';
-import { logoutUser } from '../../../handlers/AuthHandlers';
+// import { logoutUser } from '../../../handlers/AuthHandlers';
 
 const DashboardHeader = ({ setIsSidebarOpen, user }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const { setUser, setLoading } = useAppContext();
     const router = useRouter();
 
-    const handleLogout = async () => {
-        try {
-            setLoading(true);
-            const result = await logoutUser();
+    // const handleLogout = async () => {
+    //     try {
+    //         setLoading(true);
+    //         const result = await logoutUser();
 
-            if (result && result.success) {
-                setUser(null);
-                router.push('/');
-            } else {
-                console.error('Logout failed:', result?.error || result?.message);
-                setUser(null);
-                router.push('/');
-            }
-        } catch (error) {
-            console.error('Logout error:', error);
-            setUser(null);
-            router.push('/');
-        } finally {
-            setLoading(false);
-        }
-    };
+    //         if (result && result.success) {
+    //             setUser(null);
+    //             router.push('/');
+    //         } else {
+    //             console.error('Logout failed:', result?.error || result?.message);
+    //             setUser(null);
+    //             router.push('/');
+    //         }
+    //     } catch (error) {
+    //         console.error('Logout error:', error);
+    //         setUser(null);
+    //         router.push('/');
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     return (
         <header className="bg-white shadow-sm border-b border-gray-200">
@@ -87,6 +87,7 @@ const DashboardHeader = ({ setIsSidebarOpen, user }) => {
                                 onClick={() => {
                                     setIsDropdownOpen(false);
                                     // You can add profile edit functionality here
+                                    router.push('profile');
                                 }}
                                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                             >
@@ -103,7 +104,7 @@ const DashboardHeader = ({ setIsSidebarOpen, user }) => {
                                 View Properties Site
                             </button>
 
-                            <button
+                            {/* <button
                                 onClick={() => {
                                     setIsDropdownOpen(false);
                                     handleLogout();
@@ -111,7 +112,7 @@ const DashboardHeader = ({ setIsSidebarOpen, user }) => {
                                 className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                             >
                                 Sign Out
-                            </button>
+                            </button> */}
                         </div>
                     )}
                 </div>

@@ -1,8 +1,11 @@
 "use client";
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const DashboardSidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) => {
+    const router = useRouter();
+
     const menuItems = [
         {
             id: 'overview',
@@ -52,6 +55,7 @@ const DashboardSidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebar
     ];
 
     const handleMenuClick = (tabId) => {
+        router.push(`/dashboard/${tabId}`);
         setActiveTab(tabId);
         setIsSidebarOpen(false);
     };
@@ -81,8 +85,8 @@ const DashboardSidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebar
                                 key={item.id}
                                 onClick={() => handleMenuClick(item.id)}
                                 className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${activeTab === item.id
-                                        ? 'bg-green-100 text-green-700 border border-green-200'
-                                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                                    ? 'bg-green-100 text-green-700 border border-green-200'
+                                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                                     }`}
                             >
                                 {item.icon}

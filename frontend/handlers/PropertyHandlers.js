@@ -90,9 +90,32 @@ export const getPropertyById = async (propertyId) => {
  * @param {Object} propertyData - Property data
  * @returns {Promise<Object>} Create property response
  */
-export const createProperty = async (propertyData) => {
+export const createProperty = async (propertyData, imageFiles) => {
     try {
-        const response = await api.post('/properties', propertyData);
+        // Create FormData object for multipart/form-data
+        const formData = new FormData();
+
+        // Append property data
+        formData.append('title', propertyData.title);
+        formData.append('description', propertyData.description || '');
+        formData.append('category', propertyData.category);
+        formData.append('purpose', propertyData.purpose);
+        formData.append('location', propertyData.location);
+        formData.append('price', propertyData.price);
+
+        // Append image files if provided
+        if (imageFiles && imageFiles.length > 0) {
+            for (let i = 0; i < imageFiles.length; i++) {
+                formData.append('images', imageFiles[i]);
+            }
+        }
+
+        const response = await api.post('/properties', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+
         const data = response.data;
 
         return {
@@ -126,16 +149,54 @@ export const createProperty = async (propertyData) => {
  * @param {Object} propertyData - Updated property data
  * @returns {Promise<Object>} Update property response
  */
-export const updateProperty = async (propertyId, propertyData) => {
+export const updateProperty = async (propertyId, propertyData, selectedFiles, imagesToDelete) => {
     try {
-        const response = await api.put(`/properties/${propertyId}`, propertyData);
+        // Create FormData object for multipart/form-data
+        const formData = new FormData();
+
+        // Append property data fields
+        Object.entries(propertyData).forEach(([key, value]) => {
+            if (value !== undefined && value !== null) {
+                formData.append(key, value);
+            }
+        });
+
+        // Append images to delete as JSON string
+        if (imagesToDelete && imagesToDelete.length > 0) {
+            formData.append('imagesToDelete', JSON.stringify(imagesToDelete));
+        }
+
+
+        // Append new image files if provided
+        if (selectedFiles && selectedFiles.length > 0) {
+            for (let i = 0; i < selectedFiles.length; i++) {
+                formData.append('images', selectedFiles[i]);
+            }
+        }
+
+        const response = await api.put(`/properties/${propertyId}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+
         const data = response.data;
 
-        return {
-            success: true,
-            data: data,
-            message: data.message || 'Property updated successfully'
-        };
+        if (data.success) {
+            return {
+                success: true,
+                data: data.data,
+                message: data.message || 'Property updated successfully'
+            };
+        }
+        else {
+            return {
+                success: false,
+                error: data.error || 'Failed to update property',
+                message: 'Failed to update property'
+            };
+        }
+
     } catch (error) {
         console.error('Update property error:', error);
         const errorMessage = error.response?.data?.message || error.message || 'Failed to update property';

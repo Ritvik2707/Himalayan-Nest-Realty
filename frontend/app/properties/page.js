@@ -5,7 +5,7 @@ import Image from 'next/image'
 import SearchFilterBar from '../components/SearchFilterBar'
 import { useAppContext } from '../context/AppContext'
 import { getProperties, searchProperties } from '../../handlers/PropertyHandlers'
-import { fetchImageUrl } from '../../handlers/PropertyUploadHandlers';
+import { fetchImageUrl } from '../../handlers/ImageHandlers';
 import PropertyCard from '../components/PropertyCard';
 
 // Loading component for Suspense fallback

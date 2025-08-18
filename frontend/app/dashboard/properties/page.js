@@ -1,18 +1,44 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { getProperties } from '../../../handlers/PropertyHandlers';
-import { fetchImageUrl } from '../../../handlers/PropertyUploadHandlers';
+import { getProperties, updateProperty, deleteProperty } from '../../../handlers/PropertyHandlers';
+import { fetchImageUrl } from '../../../handlers/ImageHandlers';
+import { useRouter } from 'next/navigation';
 
 const PropertiesManagement = () => {
     const [properties, setProperties] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
+    const [filteredProperties, setFilteredProperties] = useState([]);
+    const router = useRouter();
 
     useEffect(() => {
         loadProperties();
     }, []);
+
+    useEffect(() => {
+        let filtered = properties;
+
+        // Apply filter
+        if (filter === 'active') {
+            filtered = properties.filter(p => p.isActive);
+        } else if (filter === 'inactive') {
+            filtered = properties.filter(p => !p.isActive);
+        }
+
+        // Apply search term
+        if (searchTerm) {
+            const lowerSearchTerm = searchTerm.toLowerCase();
+            filtered = properties.filter(p =>
+                p.title.toLowerCase().includes(lowerSearchTerm) ||
+                p.description.toLowerCase().includes(lowerSearchTerm) ||
+                p.location.toLowerCase().includes(lowerSearchTerm)
+            );
+        }
+
+        setFilteredProperties(filtered);
+    }, [properties, filter, searchTerm]);
 
     const loadProperties = async () => {
         try {
@@ -31,31 +57,38 @@ const PropertiesManagement = () => {
 
     const handleStatusToggle = async (propertyId, currentStatus) => {
         // TODO: Implement status toggle API call
+        const result = await updateProperty(propertyId, { isActive: !currentStatus });
+        if (result && result.success) {
+            alert(`Property ${currentStatus ? 'Deactivated' : 'Activated'} successfully`);
+            setFilteredProperties(prev =>
+                prev.map(property =>
+                    property.id === propertyId ? { ...property, isActive: !currentStatus } : property
+                )
+            );
+        } else {
+            alert(result.error || 'Failed to update property status');
+        }
         console.log(`Toggle status for property ${propertyId} from ${currentStatus}`);
     };
 
     const handleDelete = async (propertyId) => {
         if (window.confirm('Are you sure you want to delete this property?')) {
             // TODO: Implement delete API call
-            console.log(`Delete property ${propertyId}`);
+            const result = await deleteProperty(propertyId);
+            if (result && result.success) {
+                setFilteredProperties(prev => prev.filter(property => property.id !== propertyId));
+                alert(result.message || 'Property deleted successfully');
+            }
+            console.log(`Deleted property ${propertyId}`);
         }
     };
 
-    const filteredProperties = properties.filter(property => {
-        const matchesFilter = filter === 'all' ||
-            (filter === 'active' && property.isActive) ||
-            (filter === 'inactive' && !property.isActive);
 
-        const matchesSearch = property.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            property.location.toLowerCase().includes(searchTerm.toLowerCase());
-
-        return matchesFilter && matchesSearch;
-    });
 
     if (loading) {
         return (
             <div className="flex items-center justify-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+                {/* <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div> */}
             </div>
         );
     }
@@ -74,7 +107,7 @@ const PropertiesManagement = () => {
             </div>
 
             {/* Filters and Search */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 px-4 py-2">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
                     {/* Status Filter */}
                     <div className="flex space-x-4">
@@ -130,10 +163,12 @@ const PropertiesManagement = () => {
                         {/* Property Image */}
                         <div className="relative h-48">
                             <Image
-                                src={fetchImageUrl(property.images?.[0]) || '/images/placeholder.jpg'}
+                                src={fetchImageUrl(property.image)}
                                 alt={property.title}
+                                onError={e => e.target.src = '/logos/default-property.jpg'}
                                 fill
                                 className="object-cover"
+                                unoptimized
                             />
                             <div className="absolute top-2 right-2">
                                 <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${property.isActive
@@ -176,8 +211,11 @@ const PropertiesManagement = () => {
                                 >
                                     {property.isActive ? 'Deactivate' : 'Activate'}
                                 </button>
-                                <button className="px-3 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors">
-                                    Edit
+                                <button
+                                    onClick={() => router.push(`/dashboard/properties/${property.id}`)}
+                                    className="px-3 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors"
+                                >
+                                    View & Edit
                                 </button>
                                 <button
                                     onClick={() => handleDelete(property.id)}
@@ -223,7 +261,10 @@ const PropertiesManagement = () => {
                     <p className="text-gray-500 mb-6">
                         {searchTerm ? 'Try adjusting your search criteria.' : 'Start by adding your first property.'}
                     </p>
-                    <button className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                    <button
+                        onClick={() => router.push('/dashboard/create-property')}
+                        className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                    >
                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                         </svg>

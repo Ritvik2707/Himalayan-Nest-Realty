@@ -29,6 +29,10 @@ const UserModel = (sequelize) => {
             type: DataTypes.STRING,
             values: ['customer', 'admin', 'dealer'],
         },
+        bio: {
+            type: DataTypes.TEXT,
+            allowNull: true, // Bio is optional
+        },
         createdAt: {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW, // Automatically set the creation date
