@@ -107,10 +107,10 @@ export const deleteCloudinaryImages = async (imageUrls) => {
         });
 
         const results = await Promise.all(deletePromises);
-        console.log('Cloudinary deletion results:', results);
+        // console.log('Cloudinary deletion results:', results);
         return results;
     } catch (error) {
-        console.error('Error deleting images from Cloudinary:', error);
+        console.error('Error deleting images from Cloudinary:', error.message);
         throw error;
     }
 };

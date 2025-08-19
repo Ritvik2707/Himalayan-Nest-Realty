@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllProperties, getPropertyById, createProperty, updateProperty, deleteProperty, getUserProperties } from '../controllers/PropertyController.js';
+import { getAllProperties, getPropertyById, getUserProperties, createProperty, updateProperty, deleteProperty } from '../controllers/PropertyController.js';
 import AuthMiddleware, { validateDealer } from '../middlewares/AuthMiddleware.js';
 import { uploadPropertyImages, handleMulterError } from '../middlewares/FileUploadMiddleware.js';
 

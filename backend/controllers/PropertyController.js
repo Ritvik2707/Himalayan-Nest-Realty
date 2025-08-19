@@ -177,12 +177,12 @@ export const updateProperty = async (req, res) => {
         }
 
         // Check if user owns this property
-        // if (property.dealer_id !== req.user.id) {
-        //     return res.status(403).json({
-        //         success: false,
-        //         message: 'You are not authorized to update this property'
-        //     });
-        // }
+        if (property.dealer_id !== req.user.id) {
+            return res.status(403).json({
+                success: false,
+                message: 'You are not authorized to update this property'
+            });
+        }
 
         // Update property fields
         if (propertyData.title) property.title = propertyData.title;
@@ -196,12 +196,14 @@ export const updateProperty = async (req, res) => {
         // Handle image updates
         let currentImages = property.images || [];
 
+        const imagesList = JSON.parse(imagesToDelete || '[]');
+
         // Remove images marked for deletion
-        if (imagesToDelete?.length > 0) {
+        if (imagesList?.length > 0) {
             try {
-                await deleteCloudinaryImages(imagesToDelete);
-                currentImages = currentImages.filter(img => !imagesToDelete.includes(img));
-                console.log('Images deleted successfully');
+                await deleteCloudinaryImages(imagesList);
+                currentImages = currentImages.filter(img => !imagesList.includes(img));
+                // console.log('Images deleted successfully');
             } catch (error) {
                 console.error('Error deleting images:', error);
                 // Continue with update even if some images couldn't be deleted
@@ -288,12 +290,18 @@ export const deleteProperty = async (req, res) => {
 
 export const getUserProperties = async (req, res) => {
     try {
-        const properties = await Property.findAll({
+        let properties = await Property.findAll({
             where: {
                 dealer_id: req.user.id
             },
             order: [['createdAt', 'DESC']]
         });
+
+        properties = properties.map(p => ({
+            ...p.toJSON(),
+            image: p.images?.[0] || null,
+            images: null
+        }));
 
         res.status(200).json({
             success: true,

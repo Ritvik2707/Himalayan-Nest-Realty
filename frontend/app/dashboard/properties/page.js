@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { getProperties, updateProperty, deleteProperty } from '../../../handlers/PropertyHandlers';
+import { getMyProperties, updateProperty, deleteProperty } from '../../../handlers/PropertyHandlers';
 import { fetchImageUrl } from '../../../handlers/ImageHandlers';
 import { useRouter } from 'next/navigation';
 
@@ -43,9 +43,10 @@ const PropertiesManagement = () => {
     const loadProperties = async () => {
         try {
             setLoading(true);
-            const result = await getProperties();
+            const result = await getMyProperties();
 
             if (result && result.success) {
+                console.log('Properties loaded:', result.data?.properties);
                 setProperties(result.data?.properties || []);
             }
         } catch (error) {

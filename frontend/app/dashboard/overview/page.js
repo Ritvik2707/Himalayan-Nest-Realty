@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { getProperties } from '../../../handlers/PropertyHandlers';
+import { getMyProperties } from '../../../handlers/PropertyHandlers';
 import { useRouter } from 'next/navigation';
 
 const DashboardOverview = () => {
@@ -21,7 +21,8 @@ const DashboardOverview = () => {
     const loadDashboardData = async () => {
         try {
             setLoading(true);
-            const result = await getProperties();
+            const result = await getMyProperties();
+            console.log('Dashboard data loaded:', result);
 
             if (result && result.success) {
                 const properties = result.data?.properties || [];

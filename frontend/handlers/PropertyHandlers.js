@@ -86,6 +86,40 @@ export const getPropertyById = async (propertyId) => {
 };
 
 /**
+ * Get My Properties (User's own properties)
+ * @returns {Promise<Object>} User's properties response
+ */
+export const getMyProperties = async () => {
+    try {
+        const response = await api.get('/properties/my-properties');
+        const data = response.data;
+
+        return {
+            success: true,
+            data: data.data,
+            message: data.message || 'Your properties fetched successfully'
+        };
+    } catch (error) {
+        console.error('Get my properties error:', error);
+        const errorMessage = error.response?.data?.message || error.message || 'Failed to fetch your properties';
+
+        if (error.response?.status === 401) {
+            return {
+                success: false,
+                error: 'Authentication required. Please login.',
+                message: 'Failed to fetch your properties'
+            };
+        }
+
+        return {
+            success: false,
+            error: errorMessage,
+            message: 'Failed to fetch your properties'
+        };
+    }
+};
+
+/**
  * Create New Property Listing
  * @param {Object} propertyData - Property data
  * @returns {Promise<Object>} Create property response
