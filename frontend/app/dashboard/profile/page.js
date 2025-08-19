@@ -2,6 +2,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useAppContext } from '@/app/context/AppContext';
 import { updateUserProfile } from '@/handlers/AuthHandlers';
+import Image from 'next/image';
 
 const ProfileManagement = () => {
     const { user, setUser } = useAppContext();
@@ -115,9 +116,13 @@ const ProfileManagement = () => {
                         {/* Profile Header */}
                         <div className="flex items-center space-x-6 pb-6 border-b border-gray-200">
                             <div className="w-20 h-20 bg-gray-300 rounded-full flex items-center justify-center">
-                                <svg className="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
+                                <Image
+                                    src={user?.profilePicture || '/logos/default-profile.png'}
+                                    alt="Profile Picture"
+                                    onError={(e) => e.target.src = '/logos/default-profile.png'}
+                                    width={80} height={80}
+                                    className="w-full h-full rounded-full object-cover"
+                                />
                             </div>
                             <div>
                                 <h3 className="text-xl font-semibold text-gray-900">

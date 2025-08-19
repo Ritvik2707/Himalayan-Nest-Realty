@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { getMyProperties } from '../../../handlers/PropertyHandlers';
 import { useRouter } from 'next/navigation';
+import { BriefcaseBusiness, Building, Circle, CircleCheck, Eye, MessageCircleMore, Plus } from 'lucide-react';
 
 const DashboardOverview = () => {
     const [stats, setStats] = useState({
@@ -22,7 +23,7 @@ const DashboardOverview = () => {
         try {
             setLoading(true);
             const result = await getMyProperties();
-            console.log('Dashboard data loaded:', result);
+            // console.log('Dashboard data loaded:', result);
 
             if (result && result.success) {
                 const properties = result.data?.properties || [];
@@ -84,9 +85,7 @@ const DashboardOverview = () => {
                     value={stats.totalProperties}
                     color="green"
                     icon={
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                        </svg>
+                        <Building className="w-6 h-6" />
                     }
                 />
                 <StatCard
@@ -94,9 +93,7 @@ const DashboardOverview = () => {
                     value={stats.activeProperties}
                     color="blue"
                     icon={
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                        <CircleCheck className="w-6 h-6" />
                     }
                 />
                 <StatCard
@@ -104,10 +101,7 @@ const DashboardOverview = () => {
                     value={stats.totalViews}
                     color="purple"
                     icon={
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
+                        <Eye className="w-6 h-6" />
                     }
                 />
                 <StatCard
@@ -115,52 +109,58 @@ const DashboardOverview = () => {
                     value={stats.totalQueries}
                     color="yellow"
                     icon={
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                        </svg>
+                        <MessageCircleMore className="w-6 h-6" />
                     }
                 />
             </div>
 
             {/* Recent Properties */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                <div className="px-6 py-4 border-b border-gray-200">
+                <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
                     <h3 className="text-lg font-medium text-gray-900">Recent Properties</h3>
                 </div>
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                     {recentProperties.length > 0 ? (
                         <div className="space-y-4">
                             {recentProperties.map((property) => (
-                                <div key={property.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                    <div className="flex items-center space-x-4">
-                                        <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                                            <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                            </svg>
+                                <div key={property.id} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 justify-between p-3 sm:p-4 bg-gray-50 rounded-lg">
+                                    <div className="flex items-center space-x-3 sm:space-x-4">
+                                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <Building className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                                         </div>
-                                        <div>
-                                            <h4 className="text-sm font-medium text-gray-900">{property.title}</h4>
-                                            <p className="text-sm text-gray-500">{property.location} • {property.category}</p>
+                                        <div className="min-w-0 flex-1">
+                                            <h4 className="text-sm font-medium text-gray-900 truncate">{property.title}</h4>
+                                            <p className="text-xs sm:text-sm text-gray-500 truncate">{property.location} • {property.category}</p>
                                         </div>
                                     </div>
-                                    <div className="text-right">
-                                        <p className="text-sm font-medium text-gray-900">₹{property.price}</p>
-                                        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${property.isActive
-                                            ? 'bg-green-100 text-green-800'
-                                            : 'bg-red-100 text-red-800'
-                                            }`}>
-                                            {property.isActive ? 'Active' : 'Inactive'}
-                                        </span>
+
+                                    <div className='flex flex-col sm:flex-row items-start sm:items-center gap-x-3 sm:gap-6 sm:flex-shrink-0'>
+                                        <div className="flex justify-between items-center w-full sm:w-auto sm:text-right">
+                                            <div>
+                                                <p className="text-sm font-medium text-gray-900">₹{property.price}</p>
+                                            </div>
+                                            <span className={`inline-flex px-2 py-1 ml-2 text-xs font-medium rounded-full ${property.isActive
+                                                ? 'bg-green-100 text-green-800'
+                                                : 'bg-red-100 text-red-800'
+                                                }`}>
+                                                {property.isActive ? 'Active' : 'Inactive'}
+                                            </span>
+                                        </div>
+
+                                        <button
+                                            onClick={() => router.push(`/dashboard/properties/${property.id}`)}
+                                            className="text-blue-600 hover:text-blue-800 transition-colors text-sm font-medium self-start sm:self-center whitespace-nowrap"
+                                        >
+                                            View Details
+                                        </button>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     ) : (
                         <div className="text-center py-8">
-                            <svg className="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                            </svg>
-                            <p className="text-gray-500">No properties found. Start by adding your first property!</p>
+                            <Building className="w-10 h-10 sm:w-12 sm:h-12 text-gray-300 mx-auto mb-4" />
+                            <p className="text-gray-500 text-sm sm:text-base px-4">No properties found. Start by adding your first property!</p>
                         </div>
                     )}
                 </div>
@@ -175,9 +175,7 @@ const DashboardOverview = () => {
                         onClick={() => router.push('/dashboard/create-property')}
                         className="flex items-center justify-center px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                     >
-                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                        </svg>
+                        <Plus className="w-5 h-5 mr-2" />
                         Add New Property
                     </button>
 
@@ -185,9 +183,7 @@ const DashboardOverview = () => {
                         onClick={() => router.push('/dashboard/properties')}
                         className="flex items-center justify-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                     >
-                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002 2h6a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                        </svg>
+                        <BriefcaseBusiness className="w-5 h-5 mr-2" />
                         Manage Properties
                     </button>
 
@@ -195,9 +191,7 @@ const DashboardOverview = () => {
                         onClick={() => router.push('/dashboard/queries')}
                         className="flex items-center justify-center px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
                     >
-                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                        </svg>
+                        <MessageCircleMore className="w-5 h-5 mr-2" />
                         View Queries
                     </button>
                 </div>

@@ -2,9 +2,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import { getPropertyById, deleteProperty } from "../../../../handlers/PropertyHandlers";
+import { getPropertyById, updateProperty, deleteProperty } from "../../../../handlers/PropertyHandlers";
 import { fetchImageUrl } from "../../../../handlers/ImageHandlers";
 import EditProperty from "../../../components/dashboard/EditProperty";
+import { Eye, MessageCircleMore, MoveLeft } from "lucide-react";
 
 export default function PropertyDetailPage() {
     const params = useParams();
@@ -37,6 +38,18 @@ export default function PropertyDetailPage() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleStatusToggle = async () => {
+        // TODO: Implement status toggle API call
+        const result = await updateProperty(propertyId, { isActive: !property.isActive });
+        if (result && result.success) {
+            alert(`Property ${property.isActive ? 'Deactivated' : 'Activated'} successfully`);
+            setProperty(prev => ({ ...prev, isActive: !prev.isActive }));
+        } else {
+            alert(result.error || 'Failed to update property status');
+        }
+        console.log(`Toggle status for property ${propertyId} from ${property.isActive} to ${!property.isActive}`);
     };
 
     const handleDelete = async () => {
@@ -78,6 +91,14 @@ export default function PropertyDetailPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
+                    <button
+                        onClick={() => router.back()}
+                        className="inline-flex items-center px-4 py-2 mb-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-200 hover:text-gray-900"
+                    >
+                        <MoveLeft className="w-4 h-4 mr-2" />
+                        Back to Properties
+                    </button>
+
                     <h2 className="text-2xl font-bold text-gray-900 mb-1">{property.title}</h2>
                     <div className="flex items-center space-x-2 text-sm text-gray-500">
                         <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">{property.category}</span>
@@ -86,6 +107,15 @@ export default function PropertyDetailPage() {
                     </div>
                 </div>
                 <div className="flex gap-2">
+                    <button
+                        onClick={handleStatusToggle}
+                        className={`flex-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${property.isActive
+                            ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+                            : 'bg-green-100 text-green-700 hover:bg-green-200'
+                            }`}
+                    >
+                        {property.isActive ? 'Deactivate' : 'Activate'}
+                    </button>
                     <button
                         onClick={() => setEditMode(true)}
                         className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -106,12 +136,12 @@ export default function PropertyDetailPage() {
                 {(property.images && property.images.length > 0 ? property.images : [fetchImageUrl(property.image)]).map((img, idx) => (
                     <div key={idx} className="relative w-full h-48 rounded-lg overflow-hidden border border-gray-200">
                         <Image
-                            src={img}
+                            src={img || '/logos/default-property.jpg'}
                             alt={`Property Image ${idx + 1}`}
-                            fill
+                            fill sizes="(max-width: 700px) 100vw, (min-width: 400px) 50vw"
                             className="object-cover"
-                            unoptimized
                             onError={e => e.target.src = '/logos/default-property.jpg'}
+                        // unoptimized
                         />
                     </div>
                 ))}
@@ -144,16 +174,11 @@ export default function PropertyDetailPage() {
                     </div>
                     <div className="flex items-center space-x-6 mt-4">
                         <div className="flex items-center text-xs text-gray-500">
-                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
+                            <Eye className="w-4 h-4 mr-1" />
                             {property.views || 0} views
                         </div>
                         <div className="flex items-center text-xs text-gray-500">
-                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                            </svg>
+                            <MessageCircleMore className="w-4 h-4 mr-1" />
                             {property.queries || 0} queries
                         </div>
                     </div>

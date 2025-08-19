@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { updateProperty } from '../../../handlers/PropertyHandlers';
+import { Plus, X } from 'lucide-react';
 
 const EditProperty = ({ property, onClose, onUpdate }) => {
     const [formData, setFormData] = useState({
@@ -141,16 +142,14 @@ const EditProperty = ({ property, onClose, onUpdate }) => {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-100 sm:p-4">
             <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[100vh] sm:max-h-[90vh] overflow-y-auto">
-                <div className="p-6">
+                <div className="p-6 pb-16">
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-2xl font-bold text-gray-900">Edit Property</h2>
                         <button
                             onClick={onClose}
                             className="text-gray-400 hover:text-gray-600 transition-colors"
                         >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
+                            <X className="w-6 h-6" />
                         </button>
                     </div>
 
@@ -290,9 +289,7 @@ const EditProperty = ({ property, onClose, onUpdate }) => {
                                                     onClick={() => restoreExistingImage(imageUrl)}
                                                     className="absolute top-1 right-1 bg-green-500 text-white rounded-full p-1 text-xs"
                                                 >
-                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                                    </svg>
+                                                    <Plus className="w-3 h-3" />
                                                 </button>
                                             ) : (
                                                 <button
@@ -300,9 +297,7 @@ const EditProperty = ({ property, onClose, onUpdate }) => {
                                                     onClick={() => removeExistingImage(imageUrl)}
                                                     className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
                                                 >
-                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                                    </svg>
+                                                    <X className="w-3 h-3" />
                                                 </button>
                                             )}
                                         </div>
@@ -345,9 +340,7 @@ const EditProperty = ({ property, onClose, onUpdate }) => {
                                                 onClick={() => removeNewImage(index)}
                                                 className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
                                             >
-                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                                </svg>
+                                                <X className="w-3 h-3" />
                                             </button>
                                         </div>
                                     ))}

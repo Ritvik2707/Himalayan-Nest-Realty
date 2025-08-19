@@ -2,6 +2,7 @@
 import React, { use, useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { getPropertyById } from '@/handlers/PropertyHandlers'
+import Image from 'next/image'
 
 const Page = () => {
     const { id } = useParams()
@@ -314,9 +315,11 @@ const ImageCarousal = ({ images }) => {
 
     return (
         <div className="relative h-full">
-            <img
+            <Image
                 src={images[currentImageIndex]}
                 alt={`Property Image ${currentImageIndex + 1}`}
+                width={300}
+                height={250}
                 onError={(e) => e.target.src = '/logos/default-property.jpg'}
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}

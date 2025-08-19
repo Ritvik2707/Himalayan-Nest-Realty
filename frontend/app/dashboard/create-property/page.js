@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { createProperty } from '../../../handlers/PropertyHandlers';
+import { CloudUpload, X } from 'lucide-react';
 
 const CreateProperty = () => {
     const [formData, setFormData] = useState({
@@ -270,15 +271,9 @@ const CreateProperty = () => {
                                     htmlFor="images"
                                     className="cursor-pointer flex flex-col items-center"
                                 >
-                                    <svg className="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                                    </svg>
-                                    <span className="text-gray-600">
-                                        Click to upload images or drag and drop
-                                    </span>
-                                    <span className="text-sm text-gray-500 mt-1">
-                                        PNG, JPG, GIF up to 10MB each
-                                    </span>
+                                    <CloudUpload className="w-12 h-12 text-gray-400 mb-4" />
+                                    <span className="text-gray-600">Click to upload images or drag and drop</span>
+                                    <span className="text-sm text-gray-500 mt-1">PNG, JPG, GIF up to 10MB each</span>
                                 </label>
                             </div>
 
@@ -297,9 +292,7 @@ const CreateProperty = () => {
                                                 onClick={() => removeImage(index)}
                                                 className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
                                             >
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                                </svg>
+                                                <X className="w-4 h-4" />
                                             </button>
                                         </div>
                                     ))}

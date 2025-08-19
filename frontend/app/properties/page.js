@@ -46,11 +46,10 @@ const PropertiesContent = () => {
         if (result && result.success) {
             // Handle successful response
             let propertiesData = result.data?.properties || result.data || [];
-            propertiesData = propertiesData.map(property => ({
-                ...property,
-                image: fetchImageUrl(property.image || '/uploads/default-property.jpg')
-            }));
-            // console.log('Fetched properties:', propertiesData);
+            // propertiesData = propertiesData.map(property => ({
+            //     ...property,
+            //     image: fetchImageUrl(property.image || '/uploads/default-property.jpg')
+            // }));
 
             setProperties(propertiesData);
             setTotalPages(result.data?.totalPages || 1);

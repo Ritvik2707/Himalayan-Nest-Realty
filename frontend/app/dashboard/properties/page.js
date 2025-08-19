@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { getMyProperties, updateProperty, deleteProperty } from '../../../handlers/PropertyHandlers';
 import { fetchImageUrl } from '../../../handlers/ImageHandlers';
 import { useRouter } from 'next/navigation';
+import { Building, Eye, MessageCircleMore, Plus, Search } from 'lucide-react';
 
 const PropertiesManagement = () => {
     const [properties, setProperties] = useState([]);
@@ -99,10 +100,11 @@ const PropertiesManagement = () => {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                 <h2 className="text-2xl font-bold text-gray-900">My Properties</h2>
-                <button className="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
+                <button
+                    onClick={() => router.push('/dashboard/create-property')}
+                    className="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                >
+                    <Plus className="w-5 h-5 mr-2" />
                     Add New Property
                 </button>
             </div>
@@ -150,9 +152,7 @@ const PropertiesManagement = () => {
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                         />
-                        <svg className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
+                        <Search className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
                     </div>
                 </div>
             </div>
@@ -164,12 +164,12 @@ const PropertiesManagement = () => {
                         {/* Property Image */}
                         <div className="relative h-48">
                             <Image
-                                src={fetchImageUrl(property.image)}
+                                src={fetchImageUrl(property.image) || '/logos/default-property.jpg'}
                                 alt={property.title}
                                 onError={e => e.target.src = '/logos/default-property.jpg'}
-                                fill
+                                fill sizes="(max-width: 400px) 100vw, (max-width: 768px) 50vw, (max-width: 768px) 33vw, 25vw"
                                 className="object-cover"
-                                unoptimized
+                            // unoptimized
                             />
                             <div className="absolute top-2 right-2">
                                 <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${property.isActive
@@ -230,16 +230,11 @@ const PropertiesManagement = () => {
                             <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
                                 <div className="flex items-center space-x-4 text-xs text-gray-500">
                                     <span className="flex items-center">
-                                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                        </svg>
+                                        <Eye className="w-4 h-4 mr-1" />
                                         {property.views || 0} views
                                     </span>
                                     <span className="flex items-center">
-                                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                                        </svg>
+                                        <MessageCircleMore className="w-4 h-4 mr-1" />
                                         {property.queries || 0} queries
                                     </span>
                                 </div>
@@ -255,20 +250,17 @@ const PropertiesManagement = () => {
             {/* Empty State */}
             {filteredProperties.length === 0 && (
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-                    <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                    </svg>
+                    <Building className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">No properties found</h3>
                     <p className="text-gray-500 mb-6">
                         {searchTerm ? 'Try adjusting your search criteria.' : 'Start by adding your first property.'}
                     </p>
+
                     <button
                         onClick={() => router.push('/dashboard/create-property')}
                         className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                     >
-                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                        </svg>
+                        <Plus className="w-5 h-5 mr-2" />
                         Add Your First Property
                     </button>
                 </div>

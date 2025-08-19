@@ -6,12 +6,12 @@ export default function PropertyCard({ property }) {
         <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
             <div className="relative h-40 sm:h-48">
                 <Image
-                    src={property.image}
+                    src={property.image || '/logos/default-property.jpg'}
                     alt={property.title}
-                    onError={(e) => e.target.src = 'logos/default-property.jpg'}
-                    fill sizes='(100vw) 100vw, (min-width: 640px) 50vw, (min-width: 1024px) 33vw'
+                    onError={(e) => e.target.src = '/logos/default-property.jpg'}
+                    fill sizes='(100vw) 100vw, (min-width: 400px) 50vw, (min-width: 724px) 33vw'
                     className="object-cover"
-                    unoptimized
+                // unoptimized
                 />
             </div>
             <div className="p-3 sm:p-4 flex flex-col">
