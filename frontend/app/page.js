@@ -1,3 +1,6 @@
+// Home Page - Main Landing Page with Property Search and Featured Content
+// Displays hero section, property search, featured listings, and marketing sections
+
 "use client";
 import { useState } from "react";
 import Image from "next/image";
@@ -6,9 +9,9 @@ import { useRouter } from "next/navigation";
 import { searchProperties } from "../handlers/PropertyHandlers";
 import { Heart, MapPin, MoveRight, Phone, Search, Star } from "lucide-react";
 
-// Hero Section with Search
+// Hero Section Component - Main banner with property search functionality
 const HeroSection = () => {
-  const [activeTab, setActiveTab] = useState("buy");
+  const [activeTab, setActiveTab] = useState("buy"); // Toggle between buy/rent
   const [searchData, setSearchData] = useState({
     location: '',
     category: '',
@@ -18,10 +21,12 @@ const HeroSection = () => {
   const [isSearching, setIsSearching] = useState(false);
   const router = useRouter();
 
+  // Handle tab switching between buy and rent
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
 
+  // Update search form data
   const handleInputChange = (field, value) => {
     setSearchData(prev => ({
       ...prev,
@@ -29,16 +34,17 @@ const HeroSection = () => {
     }));
   };
 
+  // Process search and navigate to properties page with filters
   const handleSearch = async () => {
     setIsSearching(true);
 
     try {
       const searchParams = {
         ...searchData,
-        purpose: activeTab
+        purpose: activeTab // Add buy/rent preference
       };
 
-      // Create URL parameters for navigation
+      // Build URL query parameters for navigation
       const urlParams = new URLSearchParams();
       Object.entries(searchParams).forEach(([key, value]) => {
         if (value && value !== '') {
@@ -191,8 +197,9 @@ const HeroSection = () => {
   );
 };
 
-// Featured Properties Section
+// Featured Properties Section - Displays handpicked property listings
 const FeaturedProperties = () => {
+  // Static property data for demonstration (would be fetched from API in production)
   const properties = [
     {
       id: 1,
@@ -373,8 +380,9 @@ const FeaturedProperties = () => {
   );
 };
 
-// Property Categories Section
+// Property Categories Section - Browse by property types
 const PropertyCategories = () => {
+  // Available property categories with icons and descriptions
   const categories = [
     {
       name: "Apartments & Flats",
@@ -442,8 +450,9 @@ const PropertyCategories = () => {
   );
 };
 
-// Popular Cities Section
+// Popular Cities Section - Showcase properties by location
 const PopularCities = () => {
+  // Featured cities in Uttarakhand with property counts
   const cities = [
     {
       name: "Roorkee",
@@ -508,8 +517,9 @@ const PopularCities = () => {
   );
 };
 
-// Why Choose Us Section
+// Why Choose Us Section - Company benefits and features
 const WhyChooseUs = () => {
+  // Key features and benefits of using Himalayan Nest
   const features = [
     {
       icon: "🔍",
@@ -569,7 +579,7 @@ const WhyChooseUs = () => {
   );
 };
 
-// Call to Action Section
+// Call to Action Section - Encourage user engagement and property listing
 const CallToAction = () => {
   return (
     <section className="py-20 bg-gradient-to-r from-green-600 to-green-700 text-white">
@@ -609,6 +619,7 @@ const CallToAction = () => {
   );
 };
 
+// Main Home Page Component - Combines all sections into complete landing page
 export default function Home() {
   return (
     <div className="min-h-screen">

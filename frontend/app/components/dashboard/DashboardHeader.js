@@ -1,3 +1,6 @@
+// Dashboard Header Component - Top navigation for dealer dashboard
+// Provides mobile menu toggle, user profile dropdown, and dashboard title
+
 "use client";
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -6,10 +9,11 @@ import { ChevronDown, Menu } from 'lucide-react';
 // import { logoutUser } from '../../../handlers/AuthHandlers';
 
 const DashboardHeader = ({ setIsSidebarOpen, user }) => {
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const { setUser, setLoading } = useAppContext();
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false); // User dropdown menu toggle
+    const { setUser, setLoading } = useAppContext(); // Global user state
     const router = useRouter();
 
+    // Logout functionality (currently commented out)
     // const handleLogout = async () => {
     //     try {
     //         setLoading(true);

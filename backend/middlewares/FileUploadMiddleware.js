@@ -1,3 +1,6 @@
+// File Upload Middleware using Multer and Cloudinary
+// Handles property image uploads with automatic optimization and cloud storage
+
 import multer from 'multer';
 import cloudinary from '../config/cloudinary.js';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
@@ -6,14 +9,14 @@ import { CloudinaryStorage } from 'multer-storage-cloudinary';
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
-        folder: 'himalayan-nest/properties', // Organized folder structure
+        folder: 'himalayan-nest/properties', // Organized folder structure in Cloudinary
         allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
         transformation: [
-            { width: 1200, height: 800, crop: 'limit' }, // Resize large images
-            { quality: 'auto' } // Auto quality optimization
+            { width: 1200, height: 800, crop: 'limit' }, // Resize large images to standard size
+            { quality: 'auto' } // Auto quality optimization for faster loading
         ],
         public_id: (req, file) => {
-            // Generate unique filename
+            // Generate unique filename to prevent conflicts
             const timestamp = Date.now();
             const randomString = Math.random().toString(36).substring(2, 15);
             return `property_${timestamp}_${randomString}`;
@@ -21,9 +24,9 @@ const storage = new CloudinaryStorage({
     }
 });
 
-// File filter function
+// File filter function to validate uploaded files
 const fileFilter = (req, file, cb) => {
-    // Check file type
+    // List of allowed image MIME types
     const allowedMimes = [
         'image/jpeg',
         'image/jpg',

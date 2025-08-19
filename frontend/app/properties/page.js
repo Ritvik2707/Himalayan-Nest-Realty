@@ -1,3 +1,6 @@
+// Properties Page - Browse and search all available properties
+// Displays property listings with filtering, search, and pagination functionality
+
 "use client";
 import React, { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
@@ -8,7 +11,7 @@ import { getProperties, searchProperties } from '../../handlers/PropertyHandlers
 import { fetchImageUrl } from '../../handlers/ImageHandlers';
 import PropertyCard from '../components/PropertyCard';
 
-// Loading component for Suspense fallback
+// Loading Component - Displays while properties are being fetched
 const PropertiesLoading = () => (
     <div className="min-h-screen bg-gray-50">
         <div className="bg-white shadow-sm">
@@ -26,26 +29,28 @@ const PropertiesLoading = () => (
     </div>
 );
 
-// Main Properties component that uses useSearchParams
+// Main Properties Content Component - Handles property display and filtering
 const PropertiesContent = () => {
-    const [properties, setProperties] = useState([]);
-    const [error, setError] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const searchParams = useSearchParams();
-    const { loading, setLoading } = useAppContext();
-    const [filters, setFilters] = useState(Object.fromEntries(searchParams.entries()));
+    const [properties, setProperties] = useState([]); // Property listings data
+    const [error, setError] = useState(''); // Error message state
+    const [currentPage, setCurrentPage] = useState(1); // Pagination current page
+    const [totalPages, setTotalPages] = useState(1); // Total pages for pagination
+    const searchParams = useSearchParams(); // URL search parameters
+    const { loading, setLoading } = useAppContext(); // Global loading state
+    const [filters, setFilters] = useState(Object.fromEntries(searchParams.entries())); // Search filters from URL
 
-
+    // Load properties with optional search filters
     const loadProperties = async (searchFilters) => {
         setLoading(true);
         setError('');
 
+        // Fetch properties from API with current or provided filters
         let result = await getProperties(searchFilters || filters);
 
         if (result && result.success) {
-            // Handle successful response
+            // Process successful API response
             let propertiesData = result.data?.properties || result.data || [];
+            // Optional: Transform property image URLs
             // propertiesData = propertiesData.map(property => ({
             //     ...property,
             //     image: fetchImageUrl(property.image || '/uploads/default-property.jpg')

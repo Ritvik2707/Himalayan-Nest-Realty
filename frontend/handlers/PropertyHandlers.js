@@ -1,4 +1,6 @@
 // Property API handlers for Himalayan Nest Real Estate
+// Provides functions to interact with the backend API for property management
+
 import api from "./axiosInstances";
 
 /**
@@ -10,7 +12,7 @@ export const getProperties = async (filters = {}) => {
     try {
         const params = {};
 
-        // Add filters to query parameters
+        // Add only non-empty filters to query parameters
         Object.entries(filters).forEach(([key, value]) => {
             if (value && value !== '') {
                 params[key] = value;
@@ -126,10 +128,10 @@ export const getMyProperties = async () => {
  */
 export const createProperty = async (propertyData, imageFiles) => {
     try {
-        // Create FormData object for multipart/form-data
+        // Create FormData object for multipart/form-data (required for file uploads)
         const formData = new FormData();
 
-        // Append property data
+        // Append individual property fields (required by backend multer middleware)
         formData.append('title', propertyData.title);
         formData.append('description', propertyData.description || '');
         formData.append('category', propertyData.category);
@@ -137,7 +139,7 @@ export const createProperty = async (propertyData, imageFiles) => {
         formData.append('location', propertyData.location);
         formData.append('price', propertyData.price);
 
-        // Append image files if provided
+        // Append image files with 'images' field name (expected by multer)
         if (imageFiles && imageFiles.length > 0) {
             for (let i = 0; i < imageFiles.length; i++) {
                 formData.append('images', imageFiles[i]);
@@ -146,7 +148,7 @@ export const createProperty = async (propertyData, imageFiles) => {
 
         const response = await api.post('/properties', formData, {
             headers: {
-                'Content-Type': 'multipart/form-data',
+                'Content-Type': 'multipart/form-data', // Required for file uploads
             },
         });
 
@@ -161,6 +163,7 @@ export const createProperty = async (propertyData, imageFiles) => {
         console.error('Create property error:', error);
         const errorMessage = error.response?.data?.message || error.message || 'Failed to create property';
 
+        // Handle authentication errors specifically
         if (error.response?.status === 401) {
             return {
                 success: false,

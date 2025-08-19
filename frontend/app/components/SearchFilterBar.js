@@ -1,3 +1,6 @@
+// Search Filter Bar Component - Advanced property search and filtering
+// Provides search functionality with location, category, price, and keyword filters
+
 "use client";
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -6,14 +9,19 @@ import { useAppContext } from '../context/AppContext';
 const SearchFilterBar = ({ onSearch, searchParams }) => {
     const router = useRouter();
 
+    // Filter state management
     const [filters, setFilters] = useState({
-        location: '', category: '', minPrice: '', maxPrice: '', keywords: '',
-        purpose: 'buy' // Default to 'buy'
+        location: '',
+        category: '',
+        minPrice: '',
+        maxPrice: '',
+        keywords: '',
+        purpose: 'buy' // Default search for buying properties
     });
     const { loading, setLoading } = useAppContext();
 
+    // Initialize filters from URL parameters or set defaults
     useEffect(() => {
-        // Initialize filters from searchParams or default values
         const initialFilters = {
             location: searchParams.get('location') || '',
             category: searchParams.get('category') || '',
@@ -25,6 +33,7 @@ const SearchFilterBar = ({ onSearch, searchParams }) => {
         setFilters(initialFilters);
     }, [searchParams]);
 
+    // Update individual filter values
     const handleFilterChange = (key, value) => {
         setFilters(prev => ({
             ...prev,
@@ -32,21 +41,22 @@ const SearchFilterBar = ({ onSearch, searchParams }) => {
         }));
     };
 
+    // Execute search with current filters
     const handleSearch = async () => {
         setLoading(true);
 
         try {
-            // Create URLSearchParams for navigation
+            // Build URL parameters for navigation
             const params = new URLSearchParams();
 
-            // Only add non-empty filter values to URL
+            // Only include non-empty filter values in URL
             Object.entries(filters).forEach(([key, value]) => {
                 if (value && value.toString().trim()) {
                     params.set(key, value);
                 }
             });
 
-            // If we have an onSearch callback (like in properties page), call it
+            // Call parent component's search handler if provided
             if (onSearch) {
                 await onSearch(filters);
             } else {

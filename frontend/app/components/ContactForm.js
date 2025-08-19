@@ -1,8 +1,12 @@
+// Contact Form Component - Customer inquiry and message submission
+// Handles contact form submission with validation and user feedback
+
 "use client";
 import React, { useState } from 'react'
 import { submitContactForm } from '../../handlers/EnquiryHandlers'
 
 const ContactForm = () => {
+    // Form data state management
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -11,9 +15,10 @@ const ContactForm = () => {
         message: ''
     });
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [message, setMessage] = useState({ type: '', content: '' });
+    const [isSubmitting, setIsSubmitting] = useState(false); // Submission loading state
+    const [message, setMessage] = useState({ type: '', content: '' }); // Success/error messages
 
+    // Handle input field changes
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -21,21 +26,23 @@ const ContactForm = () => {
         });
     };
 
+    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
         setMessage({ type: '', content: '' });
 
         try {
+            // Submit contact form to API
             const result = await submitContactForm(formData);
 
             if (result && result.success) {
-                // Handle successful submission
+                // Show success message and clear form
                 setMessage({
                     type: 'success',
                     content: result.message || 'Thank you for contacting us! We will get back to you soon.'
                 });
-                // Clear form on success
+                // Reset form data on successful submission
                 setFormData({
                     name: '',
                     email: '',

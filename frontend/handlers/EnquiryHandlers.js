@@ -1,4 +1,6 @@
 // Enquiry API handlers for Himalayan Nest Real Estate
+// Manages customer inquiries, contact form submissions, and property-specific enquiries
+
 import api from "./axiosInstances";
 
 /**

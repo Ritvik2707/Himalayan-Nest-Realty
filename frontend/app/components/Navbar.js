@@ -1,3 +1,6 @@
+// Navigation Bar Component - Main site navigation with authentication
+// Provides responsive navigation, user authentication UI, and mobile menu
+
 "use client"
 import React, { useState } from 'react'
 import Link from 'next/link'
@@ -9,32 +12,34 @@ import './styles.css'
 import { Building, House, Info, Mail, Menu, X } from 'lucide-react'
 
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, setUser, setLoading } = useAppContext();
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // Mobile menu toggle
+  const { user, setUser, setLoading } = useAppContext(); // Global user state
   const router = useRouter();
 
+  // Toggle mobile menu visibility
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  // Handle user logout process
   const handleLogout = async () => {
     try {
       setLoading(true);
-      const result = await logoutUser();
+      const result = await logoutUser(); // Call logout API
 
       if (result && result.success) {
-        // Clear user data and redirect
+        // Successful logout - clear user state and redirect
         setUser(null);
         router.push('/');
       } else {
         console.error('Logout failed:', result?.error || result?.message);
-        // Still clear user data locally even if server logout fails
+        // Clear user data locally even if server logout fails (fail-safe)
         setUser(null);
         router.push('/');
       }
     } catch (error) {
       console.error('Logout error:', error);
-      // Clear user data locally on error
+      // Clear user data locally on any error
       setUser(null);
       router.push('/');
     } finally {
@@ -46,7 +51,7 @@ const Navbar = () => {
     <nav className="bg-white shadow-md relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
+          {/* Logo and Brand */}
           <div className="flex items-center gap-1">
             <Image src={'/logos/himalayan-logo.png'} alt="Himalayan Nest Logo" width={40} height={40} className="mr-2 w-auto" />
             <Link href="/" className="text-2xl font-bold text-green-700">
@@ -54,7 +59,7 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation Links */}
           <div className="hidden sm:flex items-center space-x-6">
             <Link href="/" className="text-gray-700 hover:text-green-700 font-medium transition-colors">
               Home

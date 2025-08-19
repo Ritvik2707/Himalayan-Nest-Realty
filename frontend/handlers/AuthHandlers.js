@@ -1,4 +1,6 @@
 // Authentication API handlers for Himalayan Nest Real Estate
+// Handles user registration, login, logout, and session management
+
 import api from "./axiosInstances";
 
 /**
@@ -11,7 +13,7 @@ export const registerUser = async (userData) => {
         const response = await api.post('/auth/register', userData);
         const data = response.data;
 
-        // Store user data if provided (no token needed as it's in cookies)
+        // Store user data in localStorage for client-side access (JWT is in HTTP-only cookies)
         if (data.user) {
             localStorage.setItem('user', JSON.stringify(data.user));
         }

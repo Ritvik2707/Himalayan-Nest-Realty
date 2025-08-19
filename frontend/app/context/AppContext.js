@@ -1,28 +1,34 @@
+// Global Application Context for State Management
+// Manages user authentication state and provides it to all components
+
 'use client';
 import { createContext, useState, useContext, useEffect } from "react";
 import { getCurrentUser } from "../../handlers/AuthHandlers";
 
+// Create context for global state sharing
 const AppContext = createContext();
 
+// Context Provider component that wraps the entire app
 export const AppProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true); // Start with true for initial auth check
-    const [authChecked, setAuthChecked] = useState(false);
+    const [user, setUser] = useState(null); // Current authenticated user
+    const [loading, setLoading] = useState(true); // Loading state for auth check
+    const [authChecked, setAuthChecked] = useState(false); // Has auth check completed
 
     // Check authentication status on app initialization
     useEffect(() => {
         const checkAuth = async () => {
             try {
+                // Verify if user is still authenticated (check JWT validity)
                 const result = await getCurrentUser();
 
                 if (result && result.success && result.data?.user) {
-                    setUser(result.data.user);
+                    setUser(result.data.user); // User is authenticated
                 } else {
-                    setUser(null);
+                    setUser(null); // No valid authentication
                 }
             } catch (error) {
                 console.error('Auth check failed:', error);
-                setUser(null);
+                setUser(null); // Clear user on error
             } finally {
                 setAuthChecked(true);
                 setLoading(false);
@@ -32,11 +38,12 @@ export const AppProvider = ({ children }) => {
         checkAuth();
     }, []);
 
-    // Helper function to clear user data
+    // Helper function to clear user data (for logout)
     const clearUser = () => {
         setUser(null);
     };
 
+    // Context value object containing all shared state and functions
     const context = {
         // User state
         user,

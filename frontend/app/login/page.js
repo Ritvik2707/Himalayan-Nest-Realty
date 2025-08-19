@@ -1,3 +1,6 @@
+// Login Page Component - User authentication form
+// Handles user login with email/password and redirects based on user role
+
 "use client";
 import React, { useState } from 'react'
 import Link from 'next/link'
@@ -6,25 +9,28 @@ import { useAppContext } from '../context/AppContext'
 import { loginUser } from '../../handlers/AuthHandlers'
 
 const Login = () => {
+    // Form state management
     const [formData, setFormData] = useState({
         email: '',
         password: ''
     });
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false); // Submit button loading state
+    const [error, setError] = useState(''); // Error message display
     const router = useRouter();
 
-    const { setUser, setLoading } = useAppContext();
+    const { setUser, setLoading } = useAppContext(); // Global user state
 
+    // Handle input field changes
     const handleChange = (e) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
         });
-        // Clear error when user starts typing
+        // Clear error message when user starts typing
         if (error) setError('');
     };
 
+    // Handle form submission and authentication
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
@@ -32,19 +38,20 @@ const Login = () => {
         setError('');
 
         try {
+            // Call login API
             const result = await loginUser(formData);
 
             if (result && result.success) {
-                // Update context with user data from response
+                // Update global user state with authenticated user data
                 setUser(result.data.user);
 
-                // Show success message
+                // Show success notification
                 alert(result.message || "Login successful!");
 
-                // Redirect to properties page
+                // Redirect to appropriate page based on user role
                 router.push('/properties');
 
-                // Reset form
+                // Reset form data
                 setFormData({
                     email: '',
                     password: ''

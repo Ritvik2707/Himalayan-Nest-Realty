@@ -1,16 +1,24 @@
+// Property Controller - CRUD operations for real estate listings
+// Handles property creation, updates, deletion, and filtering with image management
+
 import { Op } from 'sequelize';
 import { Property, User } from '../config/db.js';
 import { deleteCloudinaryImages } from '../middlewares/FileUploadMiddleware.js';
 
+// Helper function to build dynamic query filters from request parameters
 const createFilterQuery = (query) => {
     const filters = {};
+
+    // Basic filters - direct mapping
     if (query.location) filters.location = query.location;
     if (query.category) filters.category = query.category;
-    if (query.purpose) filters.purpose = query.purpose === 'buy' ? 'sale' : 'rent';
+    if (query.purpose) filters.purpose = query.purpose === 'buy' ? 'sale' : 'rent'; // Normalize buy to sale
 
+    // Price range filtering
     if (query.minPrice || query.maxPrice || query.budget) {
         filters.price = {};
         if (query.budget) {
+            // Budget provides a range around the specified value
             filters.price['$gte'] = Number(query.budget / 10);
             filters.price['$lte'] = Number(query.budget);
         }
@@ -18,9 +26,10 @@ const createFilterQuery = (query) => {
         if (query.maxPrice) filters.price['$lte'] = Number(query.maxPrice);
     }
 
+    // Keyword search in title and description
     if (query.keywords) {
-        const list = query.keywords.replace(/\s{2,}/g, " ").split(' ');
-        // Build an array of keyword conditions for title and description
+        const list = query.keywords.replace(/\s{2,}/g, " ").split(' '); // Clean and split keywords
+        // Build OR conditions for each keyword across title and description fields
         filters[Op.or] = list.map(keyword => ({
             [Op.or]: [
                 { title: { [Op.like]: `%${keyword}%` } },
@@ -32,26 +41,29 @@ const createFilterQuery = (query) => {
     return filters;
 }
 
+// Get all properties with optional filtering and search
 export const getAllProperties = async (req, res) => {
-    const query = req.query; // Extract query parameters for filtering, sorting, etc.
+    const query = req.query; // Extract query parameters for filtering
 
-    // Create filter query based on request parameters
+    // Build dynamic filters based on search criteria
     const filters = createFilterQuery(query);
     // console.log('filter parameters:', query, filters);
 
     try {
+        // Fetch properties with applied filters, excluding sensitive dealer_id
         let properties = await Property.findAll({
             where: filters,
             attributes: {
-                exclude: ['dealer_id']
+                exclude: ['dealer_id'] // Hide dealer_id for privacy
             },
-            order: [['createdAt', 'DESC']]
+            order: [['createdAt', 'DESC']] // Show newest properties first
         });
 
+        // Transform properties for listing view - show only first image
         properties = properties.map(p => ({
             ...p.toJSON(),
-            image: p.images?.[0] || null,
-            images: null
+            image: p.images?.[0] || null, // Use first image as thumbnail
+            images: null // Remove full images array to reduce payload size
         }));
 
         res.status(200).json({
@@ -69,16 +81,18 @@ export const getAllProperties = async (req, res) => {
     }
 }
 
+// Get single property by ID with dealer information
 export const getPropertyById = async (req, res) => {
     const { id } = req.params;
     try {
         let property = await Property.findByPk(id);
 
+        // Include dealer contact information if property has a dealer
         if (property.dealer_id) {
             const dealer = await User.findByPk(property.dealer_id, {
-                attributes: ['id', 'name', 'email', 'phone']
+                attributes: ['id', 'name', 'email', 'phone'] // Only include necessary dealer info
             });
-            property = { ...property.toJSON(), dealer: dealer }; // Include dealer info
+            property = { ...property.toJSON(), dealer: dealer }; // Merge dealer info with property
         }
 
         if (!property) {
@@ -101,13 +115,14 @@ export const getPropertyById = async (req, res) => {
     }
 }
 
+// Create new property listing with image uploads
 export const createProperty = async (req, res) => {
     try {
         const { title, description, category, purpose, location, price } = req.body;
 
-        // Validate required fields
+        // Validate required fields before processing
         if (!title || !category || !purpose || !location || !price) {
-            // Clean up uploaded files if validation fails
+            // Clean up uploaded files if validation fails to prevent orphaned images
             if (req.files && req.files.length > 0) {
                 const cloudinaryUrls = req.files.map(file => file.path); // Cloudinary returns full URL in file.path
                 await deleteCloudinaryImages(cloudinaryUrls);
@@ -118,26 +133,28 @@ export const createProperty = async (req, res) => {
             });
         }
 
-        // Process uploaded images from Cloudinary
+        // Extract image URLs from uploaded files
         let imageUrls = [];
         if (req.files && req.files.length > 0) {
             imageUrls = req.files.map(file => {
-                // Cloudinary returns the full URL in file.path
+                // Cloudinary middleware stores full URL in file.path
                 return file.path;
             });
         }
 
+        // Prepare property data for database insertion
         const propertyData = {
             title,
-            description: description || '',
+            description: description || '', // Default to empty string if not provided
             category,
             purpose,
             location,
-            price: parseFloat(price),
-            images: imageUrls,
-            dealer_id: req.user.id // Assuming authenticated user is the dealer
+            price: parseFloat(price), // Ensure price is stored as number
+            images: imageUrls, // Array of Cloudinary URLs
+            dealer_id: req.user.id // Associate with authenticated dealer
         };
 
+        // Create property in database
         const newProperty = await Property.create(propertyData);
 
         res.status(201).json({
