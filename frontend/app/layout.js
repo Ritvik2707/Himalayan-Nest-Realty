@@ -36,7 +36,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased pb-16 sm:pb-0`}
       >
         {/* Global state provider for authentication and app state */}
         <AppProvider>
@@ -44,7 +44,7 @@ export default function RootLayout({ children }) {
           <Navbar />
 
           {/* Main content area with bottom padding for mobile menu */}
-          <main className="pb-16 sm:pb-0">
+          <main>
             {children}
           </main>
 
